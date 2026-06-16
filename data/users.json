@@ -1,0 +1,141 @@
+{
+  "_comment": "Harbor & Vine team. role -> server-authoritative RBAC scope. visible_tabs gates dashboard tab visibility. Mirror server scope client-side (never fetch more, always filter down).",
+  "users": [
+    {
+      "name": "Marisol Trent",
+      "role": "owner",
+      "tools": [
+        "telegram_brief",
+        "chat",
+        "dashboard"
+      ],
+      "visible_tabs": [
+        "Overview",
+        "Listings",
+        "Pipeline",
+        "Showings",
+        "Commissions",
+        "Documents",
+        "Leads",
+        "Settings"
+      ],
+      "scope_notes": "Full access. Sees firm-wide everything.",
+      "email": "",
+      "setup_status": "pending",
+      "password_hash": "bc44233e09523a68a6391a1771d195527a7639f9188bb545da39e94d7bcd73e9",
+      "password_salt": "12861c1d3819604f"
+    },
+    {
+      "name": "Devin Okafor",
+      "role": "president",
+      "tools": [
+        "telegram_brief",
+        "chat",
+        "dashboard"
+      ],
+      "visible_tabs": [
+        "Overview",
+        "Listings",
+        "Pipeline",
+        "Showings",
+        "Commissions",
+        "Documents",
+        "Leads",
+        "Settings"
+      ],
+      "scope_notes": "Near-full. Sees commission TOTALS per agent (no split breakdowns). No payroll detail. Server strips split_pct from /api/commissions response for this role.",
+      "email": "",
+      "setup_status": "pending",
+      "password_hash": "62f9a46002cf1b1de646861376d5fffb1da38cec3fdb92d9cbdb331ab713706a",
+      "password_salt": "d8a9f3d5163b89da"
+    },
+    {
+      "name": "Carol Benitez",
+      "role": "accounting",
+      "tools": [
+        "chat",
+        "dashboard"
+      ],
+      "visible_tabs": [
+        "Overview",
+        "Commissions",
+        "Settings"
+      ],
+      "scope_notes": "Commissions + QBO sync status only. No deal documents, no leads, no showings. /api/leads returns 403.",
+      "email": "",
+      "setup_status": "pending",
+      "password_hash": "4c1a7148e8ce1b632221c27697af9b30337cc2772ce523f5b2fd8aa67c68187b",
+      "password_salt": "e2d2414b5beb7ed4"
+    },
+    {
+      "name": "Priya Raman",
+      "role": "tc",
+      "tools": [
+        "chat",
+        "dashboard"
+      ],
+      "visible_tabs": [
+        "Overview",
+        "Listings",
+        "Pipeline",
+        "Showings",
+        "Documents",
+        "Settings"
+      ],
+      "scope_notes": "Transaction Coordinator. Documents + Calendar + Pipeline. No Commissions tab. Can edit doc statuses; cannot edit commissions.",
+      "email": "",
+      "setup_status": "pending",
+      "password_hash": "4aa2964b3658c5df126e8707ec24ab9cffb22c93025656e35ee2c83f475fe6d1",
+      "password_salt": "586535a7ccfb30cb"
+    },
+    {
+      "name": "Jess Holloway",
+      "role": "agent",
+      "tools": [
+        "telegram_brief",
+        "chat",
+        "dashboard"
+      ],
+      "visible_tabs": [
+        "Overview",
+        "Listings",
+        "Pipeline",
+        "Showings",
+        "Documents",
+        "Leads",
+        "Settings"
+      ],
+      "scope_notes": "Agent. Server filters every list endpoint by agent_filter='Jess Holloway' for this role. Overview KPIs scoped to her book. Commissions tab hidden (no entry in visible_tabs).",
+      "email": "",
+      "setup_status": "pending",
+      "password_hash": "cb3d39569a9fef290d3b7e3cea72df8c25f1d948d3161c5e59ad78d10fbd34d2",
+      "password_salt": "f51e39a679e2164d"
+    },
+    {
+      "name": "Tom\u00e1s Vidal",
+      "role": "agent",
+      "tools": [
+        "telegram_brief",
+        "chat",
+        "dashboard"
+      ],
+      "visible_tabs": [
+        "Overview",
+        "Listings",
+        "Pipeline",
+        "Showings",
+        "Documents",
+        "Leads",
+        "Settings"
+      ],
+      "scope_notes": "Agent. Server filters every list endpoint by agent_filter='Tom\u00e1s Vidal' for this role. Overview KPIs scoped to his book. Commissions tab hidden.",
+      "email": "",
+      "setup_status": "pending",
+      "password_hash": "4a6e4d95b29fe7cc2c9732cb6bed05bea0406af819ce45f091e6e6c60577fc7d",
+      "password_salt": "087e248bb4c5b8f6"
+    }
+  ],
+  "total_target": 6,
+  "remaining_slots": 0,
+  "_security_note": "Client-build-grade (promoted 2026-06-16): auth.enabled=true. Each user carries password_hash + password_salt (sha256(salt + password)). The auth implementation lives in templates/backend/auth.py, mounted via flask_middleware(app) at server boot, gating every route except /login, /api/login, /logout, /brand.css, /static/*. Tokens are HMAC-SHA256-signed JWT-like payloads in the aios_token cookie. SANDBOX TEST CREDENTIALS were seeded by engine/init_passwords.py keyed by role: password_owner, password_president, password_accounting, password_tc, password_agent. Production builds run engine/init_passwords.py --interactive to prompt each user for a real password on first run (Sentinel rule 41 \u2014 no default password ships in production)."
+}

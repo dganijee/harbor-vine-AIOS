@@ -1,0 +1,24 @@
+{
+  "company_name": "Harbor & Vine Realty",
+  "vertical": "real-estate",
+  "output_dir": "C:\\Users\\dgani\\Desktop\\harbor-vine-AIOS",
+  "steps": {
+    "clone": "done",
+    "brand_extract": "skipped (extraction failed)",
+    "brand_css": "C:\\Users\\dgani\\Desktop\\harbor-vine-AIOS\\brand.css",
+    "vertical": "Real Estate Operations",
+    "config": "C:\\Users\\dgani\\Desktop\\harbor-vine-AIOS\\data\\config.json",
+    "business_info": "C:\\Users\\dgani\\Desktop\\harbor-vine-AIOS\\context\\business-info.md",
+    "strategy": "C:\\Users\\dgani\\Desktop\\harbor-vine-AIOS\\context\\strategy.md",
+    "soul": "C:\\Users\\dgani\\Desktop\\harbor-vine-AIOS\\soul\\SOUL.md",
+    "identity": "C:\\Users\\dgani\\Desktop\\harbor-vine-AIOS\\soul\\IDENTITY.md",
+    "sample_data": "C:\\Users\\dgani\\Desktop\\harbor-vine-AIOS\\data\\ops.db",
+    "dashboard": "C:\\Users\\dgani\\Desktop\\harbor-vine-AIOS\\outputs\\dashboard.html",
+    "server": "C:\\Users\\dgani\\Desktop\\harbor-vine-AIOS\\server.py",
+    "full_tree_substitution": {
+      "files_touched": 27,
+      "total_substitutions": 106
+    }
+  },
+  "elapsed_seconds": 35.6
+}

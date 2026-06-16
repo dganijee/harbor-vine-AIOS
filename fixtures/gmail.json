@@ -1,0 +1,119 @@
+{
+  "_meta": {
+    "source": "gmail",
+    "description": "Sample inbox snapshot for Harbor & Vine Realty sandbox build. Fabricated. No real PII.",
+    "generated_for": "Phase D Stage 1 dry-run",
+    "raw_emails": [
+      {
+        "id": "msg-001",
+        "from": "sandra.park@example.com",
+        "to": "jess.holloway@harborvineRE.test",
+        "subject": "Interested in 248 Cliffside Lane",
+        "snippet": "Hi Jess — saw the listing on Zillow. Could we tour this weekend?",
+        "received_at": "2026-06-15T09:14:00Z",
+        "labels": ["INBOX", "lead"]
+      },
+      {
+        "id": "msg-002",
+        "from": "title@hanovertitle.example",
+        "to": "marisol.trent@harborvineRE.test",
+        "subject": "Escrow update — 84 Bayview",
+        "snippet": "Funds released. Final disbursement pending agent commission split confirmation.",
+        "received_at": "2026-06-14T17:42:00Z",
+        "labels": ["INBOX", "escrow"]
+      },
+      {
+        "id": "msg-003",
+        "from": "lender@coastalfirst.example",
+        "to": "tomas.vidal@harborvineRE.test",
+        "subject": "Pre-approval for B. Whitfield — $1.4M",
+        "snippet": "Borrower cleared underwriting. Letter attached.",
+        "received_at": "2026-06-13T11:02:00Z",
+        "labels": ["INBOX", "lender"]
+      },
+      {
+        "id": "msg-004",
+        "from": "ramon.duarte@example.com",
+        "to": "marisol.trent@harborvineRE.test",
+        "subject": "Listing inquiry — 12 Heronfield",
+        "snippet": "We're ready to list. Can you stop by Tuesday for a walkthrough?",
+        "received_at": "2026-06-13T08:21:00Z",
+        "labels": ["INBOX", "lead"]
+      },
+      {
+        "id": "msg-005",
+        "from": "elaine.cho@example.com",
+        "to": "jess.holloway@harborvineRE.test",
+        "subject": "Disclosure docs?",
+        "snippet": "Hi Jess — never received the seller disclosure pack for 318 Magnolia. Can you resend?",
+        "received_at": "2026-06-12T16:30:00Z",
+        "labels": ["INBOX", "doc-request"]
+      },
+      {
+        "id": "msg-006",
+        "from": "carol.benitez@harborvineRE.test",
+        "to": "marisol.trent@harborvineRE.test",
+        "subject": "Commission dispute — 84 Bayview",
+        "snippet": "Jess and Tomás both have it as primary in the tracker. Need a ruling.",
+        "received_at": "2026-06-12T10:05:00Z",
+        "labels": ["INBOX", "internal"]
+      },
+      {
+        "id": "msg-007",
+        "from": "wendy.fortier@example.com",
+        "to": "tomas.vidal@harborvineRE.test",
+        "subject": "Offer accepted!",
+        "snippet": "Seller accepted at $2.15M. Ready to move to contract.",
+        "received_at": "2026-06-11T14:48:00Z",
+        "labels": ["INBOX", "deal-update"]
+      },
+      {
+        "id": "msg-008",
+        "from": "priya.raman@harborvineRE.test",
+        "to": "marisol.trent@harborvineRE.test",
+        "subject": "Weekly TC summary",
+        "snippet": "5 deals in closing this week, 2 flagged for missing inspection contingency removal.",
+        "received_at": "2026-06-10T09:00:00Z",
+        "labels": ["INBOX", "internal"]
+      },
+      {
+        "id": "msg-009",
+        "from": "kenji.morales@example.com",
+        "to": "marisol.trent@harborvineRE.test",
+        "subject": "Referral from M. Greene",
+        "snippet": "Mara said you helped her find a place in Cliffside. Looking in the $900k range.",
+        "received_at": "2026-06-09T13:17:00Z",
+        "labels": ["INBOX", "lead"]
+      },
+      {
+        "id": "msg-010",
+        "from": "rina.akhtar@example.com",
+        "to": "jess.holloway@harborvineRE.test",
+        "subject": "Showing for 41 Driftwood Terrace",
+        "snippet": "Can we move tomorrow's showing to 3pm instead of 2pm?",
+        "received_at": "2026-06-09T08:55:00Z",
+        "labels": ["INBOX", "showing"]
+      }
+    ]
+  },
+  "contacts": [
+    {"external_id": "gmail:sandra.park", "name": "Sandra Park", "email": "sandra.park@example.com", "role": "buyer-lead", "notes": "Inquired on 248 Cliffside Lane via Zillow"},
+    {"external_id": "gmail:ramon.duarte", "name": "Ramon Duarte", "email": "ramon.duarte@example.com", "role": "seller-lead", "notes": "Ready to list 12 Heronfield"},
+    {"external_id": "gmail:elaine.cho", "name": "Elaine Cho", "email": "elaine.cho@example.com", "role": "buyer", "notes": "Awaiting disclosure pack for 318 Magnolia"},
+    {"external_id": "gmail:wendy.fortier", "name": "Wendy Fortier", "email": "wendy.fortier@example.com", "role": "seller", "notes": "Offer accepted on listing at $2.15M"},
+    {"external_id": "gmail:kenji.morales", "name": "Kenji Morales", "email": "kenji.morales@example.com", "role": "buyer-lead", "notes": "Referral from M. Greene; $900k budget"},
+    {"external_id": "gmail:rina.akhtar", "name": "Rina Akhtar", "email": "rina.akhtar@example.com", "role": "buyer", "notes": "Rescheduling showing on 41 Driftwood Terrace"},
+    {"external_id": "gmail:b.whitfield", "name": "B. Whitfield", "email": null, "role": "buyer", "notes": "Pre-approved $1.4M via Coastal First"}
+  ],
+  "pipeline": [],
+  "tasks": [
+    {"external_id": "gmail:task:disclosure-magnolia", "description": "Send seller disclosure pack to Elaine Cho for 318 Magnolia", "status": "open", "priority": "high", "due_date": "2026-06-16"},
+    {"external_id": "gmail:task:tour-cliffside", "description": "Schedule weekend tour for Sandra Park at 248 Cliffside Lane", "status": "open", "priority": "medium", "due_date": "2026-06-17"},
+    {"external_id": "gmail:task:walkthrough-heronfield", "description": "Tuesday walkthrough with Ramon Duarte at 12 Heronfield (listing prep)", "status": "open", "priority": "high", "due_date": "2026-06-16"},
+    {"external_id": "gmail:task:commission-bayview", "description": "Resolve commission primary-agent dispute on 84 Bayview (Jess vs Tomás)", "status": "open", "priority": "high", "due_date": "2026-06-16"},
+    {"external_id": "gmail:task:contract-fortier", "description": "Draft purchase contract for Wendy Fortier — accepted $2.15M offer", "status": "open", "priority": "high", "due_date": "2026-06-17"}
+  ],
+  "metrics": [
+    {"name": "new_leads_this_week", "value": 9}
+  ]
+}

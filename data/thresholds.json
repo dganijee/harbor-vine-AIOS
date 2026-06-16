@@ -1,0 +1,14 @@
+{
+  "stalled_deals": {"med_days": 7, "high_days": 14, "severity_default": "medium"},
+  "showing_conflict": {"window_minutes": 30, "severity": "high"},
+  "commission_dispute": {"severity": "high"},
+  "lead_followup": {"max_days_since_contact": 5, "severity": "medium"},
+  "listing_dom": {"max_days": 90, "severity": "medium"},
+  "morning_brief": {
+    "send_hour_local": 8,
+    "recipients": {
+      "owner": "{{TELEGRAM_CHAT_ID_OWNER}}",
+      "president": "{{TELEGRAM_CHAT_ID_PRESIDENT}}"
+    }
+  }
+}

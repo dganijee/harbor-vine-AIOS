@@ -1,0 +1,38 @@
+{
+  "_meta": {
+    "source": "qbo",
+    "description": "Sample QuickBooks commission entries for Harbor & Vine Realty sandbox build. Fabricated. No real PII.",
+    "generated_for": "Phase D Stage 1 dry-run",
+    "month_anchor": "2026-06",
+    "totals_note": "June 2026 paid+pending net = $87,200 across 4 closings. Includes the deliberate 84 Bayview disputed entry.",
+    "raw_rows": [
+      {"external_id": "qbo:cm-001", "deal_id": "sheet:row-015", "deal_title": "318 Beacon Hill Rd",  "agent_name": "Jess Holloway", "gross_commission": 34200, "split_pct": 70, "net_to_agent": 23940, "status": "paid",     "period_month": "2026-06"},
+      {"external_id": "qbo:cm-002", "deal_id": "sheet:row-021", "deal_title": "59 Salt Marsh Drive", "agent_name": "Tomás Vidal",   "gross_commission": 22800, "split_pct": 70, "net_to_agent": 15960, "status": "paid",     "period_month": "2026-06"},
+      {"external_id": "qbo:cm-003", "deal_id": "sheet:row-005", "deal_title": "511 Harborline Ave",  "agent_name": "Tomás Vidal",   "gross_commission": 50250, "split_pct": 70, "net_to_agent": 35175, "status": "pending",  "period_month": "2026-06"},
+      {"external_id": "qbo:cm-004", "deal_id": "sheet:row-002", "deal_title": "84 Bayview",          "agent_name": "Jess Holloway", "gross_commission": 64500, "split_pct": 0,  "net_to_agent": 0,     "status": "disputed", "period_month": "2026-06"},
+      {"external_id": "qbo:cm-005", "deal_id": "sheet:row-007", "deal_title": "712 Larkstone Way",   "agent_name": "Marisol Trent", "gross_commission": 39600, "split_pct": 80, "net_to_agent": 31680, "status": "pending",  "period_month": "2026-06"},
+      {"external_id": "qbo:cm-006", "deal_id": "sheet:row-013", "deal_title": "47 Anchorpoint",      "agent_name": "Tomás Vidal",   "gross_commission": 44400, "split_pct": 70, "net_to_agent": 31080, "status": "pending",  "period_month": "2026-06"},
+      {"external_id": "qbo:cm-007", "deal_id": "sheet:row-019", "deal_title": "8 Lighthouse Crescent","agent_name": "Marisol Trent","gross_commission": 48600, "split_pct": 80, "net_to_agent": 38880, "status": "pending",  "period_month": "2026-06"},
+      {"external_id": "qbo:cm-008", "deal_id": "sheet:row-003", "deal_title": "318 Magnolia",        "agent_name": "Jess Holloway", "gross_commission": 28350, "split_pct": 70, "net_to_agent": 19845, "status": "pending",  "period_month": "2026-06"},
+      {"external_id": "qbo:cm-009", "deal_id": "sheet:row-006", "deal_title": "41 Driftwood Terrace","agent_name": "Jess Holloway", "gross_commission": 24600, "split_pct": 70, "net_to_agent": 17220, "status": "pending",  "period_month": "2026-06"},
+      {"external_id": "qbo:cm-010", "deal_id": "sheet:row-016", "deal_title": "1101 Estuary Ln",     "agent_name": "Jess Holloway", "gross_commission": 26400, "split_pct": 70, "net_to_agent": 18480, "status": "pending",  "period_month": "2026-06"},
+      {"external_id": "qbo:cm-011", "deal_id": "sheet:row-009", "deal_title": "27 Marsh Hollow Lane","agent_name": "Tomás Vidal",   "gross_commission": 41850, "split_pct": 70, "net_to_agent": 29295, "status": "pending",  "period_month": "2026-06"},
+      {"external_id": "qbo:cm-012", "deal_id": "sheet:row-020", "deal_title": "414 Mistral Court",   "agent_name": "Tomás Vidal",   "gross_commission": 35400, "split_pct": 70, "net_to_agent": 24780, "status": "pending",  "period_month": "2026-06"},
+      {"external_id": "qbo:cm-013", "deal_id": "sheet:row-022", "deal_title": "1820 Crestwood",      "agent_name": "Marisol Trent", "gross_commission": 67200, "split_pct": 80, "net_to_agent": 53760, "status": "pending",  "period_month": "2026-06"},
+      {"external_id": "qbo:cm-014", "deal_id": null,            "deal_title": "Q1 referral bonus",   "agent_name": "Marisol Trent", "gross_commission": 5000,  "split_pct": 100,"net_to_agent": 5000,  "status": "paid",     "period_month": "2026-05"},
+      {"external_id": "qbo:cm-015", "deal_id": null,            "deal_title": "612 Sandpiper Ridge", "agent_name": "Tomás Vidal",   "gross_commission": 31200, "split_pct": 70, "net_to_agent": 21840, "status": "paid",     "period_month": "2026-05"},
+      {"external_id": "qbo:cm-016", "deal_id": null,            "deal_title": "9 Tradewind Ave",     "agent_name": "Jess Holloway", "gross_commission": 27000, "split_pct": 70, "net_to_agent": 18900, "status": "paid",     "period_month": "2026-05"},
+      {"external_id": "qbo:cm-017", "deal_id": null,            "deal_title": "412 Ridgemont",       "agent_name": "Marisol Trent", "gross_commission": 22500, "split_pct": 80, "net_to_agent": 18000, "status": "paid",     "period_month": "2026-04"},
+      {"external_id": "qbo:cm-018", "deal_id": null,            "deal_title": "31 Pebble Lane",      "agent_name": "Tomás Vidal",   "gross_commission": 18900, "split_pct": 70, "net_to_agent": 13230, "status": "paid",     "period_month": "2026-04"}
+    ]
+  },
+  "contacts": [],
+  "pipeline": [],
+  "tasks": [
+    {"external_id": "qbo:task:resolve-bayview", "description": "Resolve commission split: 84 Bayview (Jess vs Tomás — $64,500 gross unallocated)", "status": "open", "priority": "high", "due_date": "2026-06-16"}
+  ],
+  "metrics": [
+    {"name": "commission_earned_mtd", "value": 87200},
+    {"name": "closings_this_month", "value": 4}
+  ]
+}

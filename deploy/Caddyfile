@@ -1,0 +1,39 @@
+# Harbor & Vine Realty — FluentOS Dashboard
+# Replace YOUR_DOMAIN with the actual domain (e.g., dashboard.harbor-vine.com)
+# Caddy auto-provisions SSL via Let's Encrypt — no manual cert setup needed.
+#
+# Install Caddy: https://caddyserver.com/docs/install
+# Then: sudo caddy start --config /path/to/this/Caddyfile
+
+YOUR_DOMAIN {
+    # Basic auth — each user gets a login
+    # Generate password hashes with: caddy hash-password
+    basicauth {
+        owner    $2a$14$REPLACE_WITH_HASH
+        president    $2a$14$REPLACE_WITH_HASH
+        accounting   $2a$14$REPLACE_WITH_HASH
+        counsel   $2a$14$REPLACE_WITH_HASH
+        staff1     $2a$14$REPLACE_WITH_HASH
+        tony     $2a$14$REPLACE_WITH_HASH
+        staff2 $2a$14$REPLACE_WITH_HASH
+    }
+
+    # Reverse proxy to Flask server
+    reverse_proxy localhost:8080
+
+    # Security headers
+    header {
+        X-Content-Type-Options nosniff
+        X-Frame-Options DENY
+        Referrer-Policy strict-origin-when-cross-origin
+        Strict-Transport-Security "max-age=31536000; includeSubDomains"
+    }
+
+    # Gzip compression
+    encode gzip
+
+    log {
+        output file /var/log/caddy/harbor-vine.log
+        format json
+    }
+}

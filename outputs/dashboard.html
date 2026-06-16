@@ -1,0 +1,850 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Harbor &amp; Vine Realty — Command Center</title>
+<link rel="manifest" href="/manifest.json">
+<meta name="theme-color" content="#ed2127">
+<link rel="apple-touch-icon" href="/icon-192.png">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Lato:wght@400;700&family=Playfair+Display:wght@400;700&display=swap" rel="stylesheet">
+
+<link rel="stylesheet" href="/brand.css">
+<script src="https://cdn.jsdelivr.net/npm/chart.js@4.4.1/dist/chart.umd.min.js"></script>
+
+<style>
+  /* ---------- Reset ---------- */
+  *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  html, body { height: 100%; }
+  body {
+    background: var(--brand-bg, #fff);
+    color: var(--brand-text, #000);
+    font-family: var(--font-body, 'Lato', system-ui, sans-serif);
+    font-size: 14px;
+    line-height: 1.5;
+    -webkit-font-smoothing: antialiased;
+  }
+  button { font: inherit; cursor: pointer; }
+  a { color: var(--brand-primary); text-decoration: none; }
+  table { border-collapse: collapse; width: 100%; }
+
+  /* ---------- Layout primitives ---------- */
+  .shell { max-width: 1440px; margin: 0 auto; padding: 0 var(--space-lg, 24px); }
+
+  /* ---------- Header ---------- */
+  .header {
+    border-bottom: 1px solid var(--brand-border, #e5e5e5);
+    padding: var(--space-md, 16px) 0;
+    display: flex; align-items: center; justify-content: space-between;
+    gap: var(--space-md, 16px);
+  }
+  .brand {
+    font-family: var(--font-display, 'Playfair Display', serif);
+    font-weight: 700;
+    font-size: 22px;
+    letter-spacing: 0.04em;
+    color: var(--brand-text);
+  }
+  .brand .amp { font-style: italic; font-weight: 400; padding: 0 0.25em; }
+
+  .role-pill {
+    display: inline-flex; align-items: center; gap: 8px;
+    padding: 8px 14px;
+    border: 1px solid var(--brand-border);
+    border-radius: 999px;
+    background: #fff;
+    font-size: 13px;
+    color: var(--brand-text);
+  }
+  .role-pill select {
+    border: none; background: transparent; font: inherit;
+    color: var(--brand-text); padding-right: 18px; cursor: pointer;
+    appearance: none;
+    background-image: url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='10' height='6' viewBox='0 0 10 6' fill='none'><path d='M1 1l4 4 4-4' stroke='%23000' stroke-width='1.4'/></svg>");
+    background-repeat: no-repeat; background-position: right 0 center;
+  }
+
+  /* ---------- Nav ---------- */
+  .nav {
+    border-bottom: 1px solid var(--brand-border, #e5e5e5);
+    display: flex; gap: 0;
+    overflow-x: auto;
+  }
+  .nav-tab {
+    background: transparent; border: none;
+    padding: 14px 18px;
+    font-size: 13px; font-weight: 700; letter-spacing: 0.04em;
+    text-transform: uppercase;
+    color: var(--brand-text-muted, #5a5a5a);
+    border-bottom: 2px solid transparent;
+    white-space: nowrap;
+  }
+  .nav-tab:hover { color: var(--brand-text); }
+  .nav-tab.active {
+    color: var(--brand-text);
+    border-bottom-color: var(--brand-primary, #ed2127);
+  }
+  .nav-tab.hidden { display: none; }
+
+  /* ---------- Greeting row ---------- */
+  .greeting {
+    padding: var(--space-xl, 40px) 0 var(--space-lg, 24px);
+    display: flex; align-items: baseline; justify-content: space-between;
+    gap: var(--space-md, 16px); flex-wrap: wrap;
+  }
+  .greeting h1 {
+    font-family: var(--font-display, 'Playfair Display', serif);
+    font-weight: 700;
+    font-size: 36px;
+    letter-spacing: 0.02em;
+    line-height: 1.1;
+    text-transform: uppercase;
+  }
+  .greeting .date {
+    color: var(--brand-text-muted);
+    font-size: 14px;
+  }
+
+  /* ---------- KPI tiles ---------- */
+  .kpi-row {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: var(--space-md, 16px);
+    margin-bottom: var(--space-lg, 24px);
+  }
+  .kpi-tile {
+    background: #fff;
+    border: 1px solid var(--brand-border);
+    box-shadow: var(--shadow-soft);
+    padding: var(--space-md, 16px) var(--space-md, 16px) var(--space-lg, 24px);
+  }
+  .kpi-tile .label {
+    font-size: 11px;
+    letter-spacing: 0.12em;
+    text-transform: uppercase;
+    color: var(--brand-text-muted);
+    margin-bottom: 12px;
+  }
+  .kpi-tile .value {
+    font-family: var(--font-display);
+    font-size: 36px;
+    font-weight: 700;
+    line-height: 1;
+    color: var(--brand-text);
+  }
+  .kpi-tile .delta {
+    margin-top: 8px;
+    font-size: 12px;
+    color: var(--brand-text-muted);
+  }
+
+  /* ---------- Body grid (two columns + right rail) ---------- */
+  .body-grid {
+    display: grid;
+    grid-template-columns: 1fr 360px;
+    gap: var(--space-md, 16px);
+    margin-bottom: var(--space-xl, 40px);
+  }
+  .body-grid .col-left { display: flex; flex-direction: column; gap: var(--space-md, 16px); }
+  .body-grid .col-right { display: flex; flex-direction: column; gap: var(--space-md, 16px); }
+
+  .panel {
+    background: #fff;
+    border: 1px solid var(--brand-border);
+    box-shadow: var(--shadow-soft);
+    padding: var(--space-md, 16px);
+  }
+  .panel h2 {
+    font-family: var(--font-display);
+    font-weight: 700;
+    font-size: 14px;
+    text-transform: uppercase;
+    letter-spacing: 0.12em;
+    margin-bottom: var(--space-md, 16px);
+    color: var(--brand-text);
+  }
+  .panel .panel-meta {
+    font-size: 11px;
+    color: var(--brand-text-muted);
+    text-transform: uppercase;
+    letter-spacing: 0.08em;
+    margin-left: 6px;
+  }
+
+  /* ---------- Pipeline chart ---------- */
+  .chart-wrap { position: relative; height: 260px; }
+
+  /* ---------- Listings table ---------- */
+  table.simple { font-size: 13px; }
+  table.simple thead th {
+    text-align: left;
+    font-size: 11px;
+    letter-spacing: 0.08em;
+    text-transform: uppercase;
+    color: var(--brand-text-muted);
+    padding: 8px 0;
+    border-bottom: 1px solid var(--brand-border);
+    font-weight: 700;
+  }
+  table.simple tbody td {
+    padding: 10px 6px;
+    border-bottom: 1px solid var(--brand-border);
+    vertical-align: top;
+  }
+  table.simple tbody tr:last-child td { border-bottom: none; }
+  table.simple td.num { text-align: right; font-variant-numeric: tabular-nums; }
+  table.simple td .muted { color: var(--brand-text-muted); font-size: 12px; }
+  .dom-badge {
+    display: inline-block;
+    font-weight: 700;
+    font-variant-numeric: tabular-nums;
+  }
+
+  /* ---------- Alerts & needs-attention ---------- */
+  .alert-row, .attention-row {
+    padding: 10px 0;
+    border-bottom: 1px solid var(--brand-border);
+    display: flex; gap: 10px; align-items: flex-start;
+  }
+  .alert-row:last-child, .attention-row:last-child { border-bottom: none; }
+  .alert-icon {
+    width: 18px; height: 18px;
+    border-radius: 999px;
+    display: inline-flex; align-items: center; justify-content: center;
+    font-size: 11px; font-weight: 700;
+    color: #fff; flex-shrink: 0;
+    margin-top: 2px;
+  }
+  .alert-icon.sev-high { background: var(--brand-primary, #ed2127); }
+  .alert-icon.sev-medium { background: #b5b5b5; color: #fff; }
+  .alert-icon.sev-low { background: #e5e5e5; color: #000; }
+  .alert-title { font-size: 13px; line-height: 1.4; }
+  .alert-body { font-size: 12px; color: var(--brand-text-muted); margin-top: 2px; }
+  .attention-bullet {
+    width: 5px; height: 5px; border-radius: 50%;
+    background: var(--brand-primary); margin-top: 8px; flex-shrink: 0;
+  }
+
+  /* ---------- Footer ---------- */
+  footer {
+    border-top: 1px solid var(--brand-border);
+    padding: var(--space-md, 16px) 0;
+    display: flex; justify-content: space-between;
+    color: var(--brand-text-muted);
+    font-size: 12px;
+  }
+
+  /* ---------- Generic tab content ---------- */
+  .tab-pane { display: none; }
+  .tab-pane.active { display: block; }
+  .tab-pane > .panel { margin-bottom: var(--space-md); }
+
+  .empty {
+    padding: var(--space-lg);
+    text-align: center;
+    color: var(--brand-text-muted);
+    font-size: 13px;
+  }
+
+  /* ---------- Status badges (commission status, deal status) ---------- */
+  .status-badge {
+    display: inline-block;
+    padding: 2px 10px;
+    border-radius: 999px;
+    font-size: 11px;
+    font-weight: 700;
+    letter-spacing: 0.06em;
+    text-transform: uppercase;
+    border: 1px solid var(--brand-border);
+    background: #fff;
+    color: var(--brand-text);
+  }
+  .status-badge.warn { border-color: var(--brand-primary); color: var(--brand-primary); }
+
+  /* ---------- Mobile ---------- */
+  @media (max-width: 768px) {
+    .shell { padding: 0 var(--space-md, 16px); }
+    .body-grid { grid-template-columns: 1fr; }
+    .kpi-row { grid-template-columns: repeat(2, 1fr); }
+    .greeting h1 { font-size: 28px; }
+  }
+  @media (max-width: 390px) {
+    .kpi-row { grid-template-columns: 1fr; }
+    .greeting h1 { font-size: 24px; }
+    .nav { font-size: 12px; }
+    .nav-tab { padding: 12px; }
+  }
+</style>
+</head>
+<body>
+
+<header class="header shell">
+  <div class="brand">HARBOR<span class="amp">&amp;</span>VINE</div>
+  <div class="role-pill">
+    <span id="user-name">Marisol T.</span>
+    <select id="role-select" aria-label="Switch role">
+      <option value="owner">Broker-Owner</option>
+      <option value="president">Managing Broker</option>
+      <option value="accounting">Accounting</option>
+      <option value="tc">Transaction Coord.</option>
+      <option value="agent" data-user-name="Jess Holloway">Agent — Jess Holloway</option>
+      <option value="agent" data-user-name="Tomás Vidal">Agent — Tomás Vidal</option>
+    </select>
+  </div>
+</header>
+
+<nav class="nav shell" id="nav-tabs">
+  <button class="nav-tab active" data-tab="overview">Overview</button>
+  <button class="nav-tab" data-tab="listings">Listings</button>
+  <button class="nav-tab" data-tab="pipeline">Pipeline</button>
+  <button class="nav-tab" data-tab="showings">Showings</button>
+  <button class="nav-tab" data-tab="commissions">Commissions</button>
+  <button class="nav-tab" data-tab="documents">Documents</button>
+  <button class="nav-tab" data-tab="leads">Leads</button>
+  <button class="nav-tab" data-tab="settings">Settings</button>
+</nav>
+
+<main class="shell">
+
+  <!-- ============== OVERVIEW ============== -->
+  <section class="tab-pane active" id="tab-overview">
+    <div class="greeting">
+      <h1 id="greeting-text">GOOD MORNING</h1>
+      <div class="date" id="greeting-date"></div>
+    </div>
+
+    <div class="kpi-row" id="kpi-row">
+      <!-- Filled by JS -->
+    </div>
+
+    <div class="body-grid">
+      <div class="col-left">
+        <div class="panel">
+          <h2>Pipeline Health</h2>
+          <div class="chart-wrap"><canvas id="pipeline-chart"></canvas></div>
+        </div>
+
+        <div class="panel">
+          <h2>Top Listings by DOM</h2>
+          <table class="simple" id="top-listings-table">
+            <thead>
+              <tr>
+                <th style="width: 28px">#</th>
+                <th>Address</th>
+                <th>Agent</th>
+                <th class="num">DOM</th>
+              </tr>
+            </thead>
+            <tbody></tbody>
+          </table>
+        </div>
+      </div>
+
+      <div class="col-right">
+        <div class="panel">
+          <h2>Alerts <span class="panel-meta" id="alert-count">(0)</span></h2>
+          <div id="alerts-list"></div>
+        </div>
+
+        <div class="panel">
+          <h2>Needs Your Attention</h2>
+          <div id="attention-list"></div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <!-- ============== LISTINGS ============== -->
+  <section class="tab-pane" id="tab-listings">
+    <div class="panel">
+      <h2>All Listings</h2>
+      <table class="simple" id="listings-table">
+        <thead>
+          <tr>
+            <th>Address</th><th>Status</th><th class="num">List Price</th>
+            <th class="num">DOM</th><th>Agent</th>
+          </tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============== PIPELINE ============== -->
+  <section class="tab-pane" id="tab-pipeline">
+    <div class="panel">
+      <h2>Pipeline by Stage</h2>
+      <table class="simple" id="pipeline-stage-table">
+        <thead><tr><th>Stage</th><th class="num">Deals</th><th class="num">Total Value</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="panel">
+      <h2>All Deals</h2>
+      <table class="simple" id="pipeline-table">
+        <thead>
+          <tr><th>Title</th><th>Status</th><th class="num">Value</th>
+              <th>Contact</th><th>Agent</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============== SHOWINGS ============== -->
+  <section class="tab-pane" id="tab-showings">
+    <div class="panel">
+      <h2>Upcoming Showings</h2>
+      <table class="simple" id="showings-table">
+        <thead>
+          <tr><th>When</th><th>Address</th><th>Agent</th><th>Client</th><th>Status</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============== COMMISSIONS ============== -->
+  <section class="tab-pane" id="tab-commissions">
+    <div class="panel">
+      <h2>Commissions MTD</h2>
+      <table class="simple" id="commissions-by-agent-table">
+        <thead><tr><th>Agent</th><th class="num">Deals</th><th class="num">Net (MTD)</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="panel">
+      <h2>All Commissions</h2>
+      <table class="simple" id="commissions-table">
+        <thead>
+          <tr><th>Deal</th><th>Agent</th><th class="num">Gross</th>
+              <th class="num">Split %</th><th class="num">Net</th>
+              <th>Status</th><th>Period</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============== DOCUMENTS ============== -->
+  <section class="tab-pane" id="tab-documents">
+    <div class="panel">
+      <h2>Open Document Tasks</h2>
+      <table class="simple" id="documents-table">
+        <thead>
+          <tr><th>Description</th><th>Priority</th><th>Due</th><th>Status</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============== LEADS ============== -->
+  <section class="tab-pane" id="tab-leads">
+    <div class="panel">
+      <h2>Lead Funnel</h2>
+      <table class="simple" id="lead-funnel-table">
+        <thead><tr><th>Stage</th><th class="num">Count</th></tr></thead>
+        <tbody></tbody>
+      </table>
+    </div>
+    <div class="panel">
+      <h2>All Leads</h2>
+      <table class="simple" id="leads-table">
+        <thead>
+          <tr><th>Name</th><th>Source</th><th>Status</th>
+              <th>Last Contact</th><th>Assigned</th></tr>
+        </thead>
+        <tbody></tbody>
+      </table>
+    </div>
+  </section>
+
+  <!-- ============== SETTINGS ============== -->
+  <section class="tab-pane" id="tab-settings">
+    <div class="panel">
+      <h2>System</h2>
+      <table class="simple" id="settings-table">
+        <thead><tr><th>Setting</th><th>Value</th></tr></thead>
+        <tbody>
+          <tr><td>Build</td><td>Harbor &amp; Vine — sandbox</td></tr>
+          <tr><td>Server</td><td>http://127.0.0.1:8001</td></tr>
+          <tr><td>Connectors</td><td id="settings-connectors">gmail, google_calendar, google_sheets, qbo</td></tr>
+          <tr><td>Mode</td><td>fixtures (offline)</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+</main>
+
+<footer class="shell">
+  <span>Powered by Fellowship Automation</span>
+  <span id="last-sync">Last sync: --:--</span>
+</footer>
+
+<script>
+/* ---------- helpers ---------- */
+const $ = (sel) => document.querySelector(sel);
+const $$ = (sel) => Array.from(document.querySelectorAll(sel));
+
+function money(n) {
+  if (n == null) return '$0';
+  const v = Math.abs(n);
+  if (v >= 1_000_000) return '$' + (n / 1_000_000).toFixed(1) + 'M';
+  if (v >= 1000)      return '$' + (n / 1000).toFixed(1) + 'k';
+  return '$' + Number(n).toLocaleString();
+}
+function fmtNum(n) { return n == null ? '0' : Number(n).toLocaleString(); }
+function fmtDate(s) { if (!s) return ''; return String(s).slice(0, 16).replace('T', ' '); }
+function fmtTime() {
+  const d = new Date();
+  return d.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+}
+
+function get(path) { return fetch(path).then(r => r.json()); }
+function post(path, body) {
+  return fetch(path, {
+    method: 'POST',
+    headers: {'Content-Type': 'application/json'},
+    body: JSON.stringify(body || {})
+  }).then(r => r.json());
+}
+
+/* ---------- state ---------- */
+const state = {
+  role: 'owner',
+  scope: null,
+  user: null,
+  pipelineChart: null,
+};
+
+/* ---------- tabs ---------- */
+function activateTab(tabId) {
+  $$('.nav-tab').forEach(b => b.classList.toggle('active', b.dataset.tab === tabId));
+  $$('.tab-pane').forEach(p => p.classList.toggle('active', p.id === 'tab-' + tabId));
+  // lazy-load tab data
+  const loaders = {
+    overview: loadOverview,
+    listings: loadListings,
+    pipeline: loadPipeline,
+    showings: loadShowings,
+    commissions: loadCommissions,
+    documents: loadDocuments,
+    leads: loadLeads,
+    settings: loadSettings,
+  };
+  if (loaders[tabId]) loaders[tabId]();
+}
+$$('.nav-tab').forEach(btn => {
+  btn.addEventListener('click', () => activateTab(btn.dataset.tab));
+});
+
+/* ---------- role switching ---------- */
+$('#role-select').addEventListener('change', async (e) => {
+  const opt = e.target.options[e.target.selectedIndex];
+  const role = opt.value;
+  const userName = opt.dataset.userName || null;
+  const payload = { role };
+  if (userName) payload.user_name = userName;
+  const data = await post('/api/role_switch', payload);
+  if (data.error) { console.error(data); return; }
+  state.role = data.role;
+  state.scope = data.scope;
+  state.user = data.user;
+  applyScope();
+  // Refresh active tab
+  const active = document.querySelector('.nav-tab.active');
+  if (active) activateTab(active.dataset.tab);
+});
+
+function applyScope() {
+  if (!state.scope) return;
+  const visible = new Set(state.scope.visible_tabs.map(t => t.toLowerCase()));
+  $$('.nav-tab').forEach(btn => {
+    const slug = btn.dataset.tab.toLowerCase();
+    // Map tab slug to wireframe label
+    const label = btn.textContent.trim();
+    btn.classList.toggle('hidden', !visible.has(label.toLowerCase()));
+  });
+  if (state.user && state.user.name) {
+    const short = state.user.name.split(' ');
+    $('#user-name').textContent = short[0] + ' ' + (short[1] ? short[1][0] + '.' : '');
+  }
+}
+
+/* ---------- KPI tiles ---------- */
+function renderKpiTile(label, value, delta) {
+  return `
+    <div class="kpi-tile">
+      <div class="label">${label}</div>
+      <div class="value">${value}</div>
+      <div class="delta">${delta}</div>
+    </div>`;
+}
+
+/* ---------- Overview ---------- */
+async function loadOverview() {
+  const data = await get('/api/overview');
+  if (data.error) { console.error(data); return; }
+
+  state.role = data.role; state.scope = data.scope; state.user = data.user;
+  applyScope();
+
+  // Greeting
+  const firstName = (data.user && data.user.name || 'there').split(' ')[0].toUpperCase();
+  $('#greeting-text').textContent = 'GOOD MORNING, ' + firstName;
+  $('#greeting-date').textContent = data.date || '';
+
+  // KPI tiles
+  const k = data.kpis || {};
+  $('#kpi-row').innerHTML = [
+    renderKpiTile('Active Listings', fmtNum(k.active_listings && k.active_listings.value),
+      (k.active_listings && k.active_listings.delta_label) || ''),
+    renderKpiTile('Pipeline Volume', money(k.pipeline_volume && k.pipeline_volume.value),
+      (k.pipeline_volume && k.pipeline_volume.delta_label) || ''),
+    renderKpiTile('Closings This Month', fmtNum(k.closings_this_month && k.closings_this_month.value),
+      (k.closings_this_month && k.closings_this_month.delta_label) || ''),
+    renderKpiTile('Commission MTD', money(k.commission_mtd && k.commission_mtd.value),
+      (k.commission_mtd && k.commission_mtd.delta_label) || ''),
+    renderKpiTile('New Leads This Week', fmtNum(k.new_leads_this_week && k.new_leads_this_week.value),
+      (k.new_leads_this_week && k.new_leads_this_week.delta_label) || ''),
+  ].join('');
+
+  // Top listings
+  const topRows = (data.top_listings || []).map((l, i) => `
+    <tr>
+      <td>${i + 1}.</td>
+      <td>${l.address}<div class="muted">${l.status || ''}</div></td>
+      <td>${l.agent_name || ''}</td>
+      <td class="num"><span class="dom-badge">${fmtNum(l.days_on_market)}</span></td>
+    </tr>`).join('');
+  $('#top-listings-table tbody').innerHTML = topRows || '<tr><td colspan="4" class="empty">No listings yet.</td></tr>';
+
+  // Alerts
+  const alerts = data.alerts || [];
+  $('#alert-count').textContent = '(' + alerts.length + ')';
+  $('#alerts-list').innerHTML = alerts.length ? alerts.slice(0, 6).map(a => `
+    <div class="alert-row">
+      <span class="alert-icon sev-${a.severity || 'medium'}">${a.severity === 'high' ? '!' : 'i'}</span>
+      <div>
+        <div class="alert-title">${a.title}</div>
+        <div class="alert-body">${a.body || ''}</div>
+      </div>
+    </div>`).join('') : '<div class="empty">No active alerts.</div>';
+
+  // Needs attention
+  const att = data.needs_attention || [];
+  $('#attention-list').innerHTML = att.length ? att.map(t => `
+    <div class="attention-row">
+      <span class="attention-bullet"></span>
+      <div>
+        <div class="alert-title">${t.description}</div>
+        <div class="alert-body">Due ${t.due_date || 'unscheduled'}</div>
+      </div>
+    </div>`).join('') : '<div class="empty">All clear.</div>';
+
+  // Pipeline Health chart
+  renderPipelineChart(data.pipeline_by_stage || []);
+
+  // last sync
+  $('#last-sync').textContent = 'Last sync: ' + fmtTime();
+}
+
+function renderPipelineChart(byStage) {
+  const ctx = document.getElementById('pipeline-chart');
+  if (!ctx) return;
+  if (state.pipelineChart) { state.pipelineChart.destroy(); }
+
+  const labels = byStage.map(s => s.status || '—');
+  const values = byStage.map(s => Number(s.total || 0));
+  // Brand red for "Closing", neutral for others.
+  const colors = labels.map(l => (l || '').toLowerCase() === 'closing' ? '#ed2127' : '#1a1a1a');
+
+  state.pipelineChart = new Chart(ctx, {
+    type: 'bar',
+    data: {
+      labels,
+      datasets: [{
+        label: 'Pipeline value',
+        data: values,
+        backgroundColor: colors,
+        borderWidth: 0,
+        borderRadius: 0,
+      }],
+    },
+    options: {
+      responsive: true,
+      maintainAspectRatio: false,
+      plugins: {
+        legend: { display: false },
+        tooltip: {
+          callbacks: { label: (ctx) => money(ctx.parsed.y) },
+        },
+      },
+      scales: {
+        x: {
+          grid: { display: false },
+          ticks: { color: '#5a5a5a', font: { family: 'Lato', size: 11 } },
+        },
+        y: {
+          grid: { color: '#f0f0f0' },
+          ticks: {
+            color: '#5a5a5a', font: { family: 'Lato', size: 11 },
+            callback: (v) => money(v),
+          },
+        },
+      },
+    },
+  });
+}
+
+/* ---------- Listings ---------- */
+async function loadListings() {
+  const data = await get('/api/listings');
+  const tbody = $('#listings-table tbody');
+  if (data.error || !data.listings || !data.listings.length) {
+    tbody.innerHTML = '<tr><td colspan="5" class="empty">No listings yet.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = data.listings.map(l => `
+    <tr>
+      <td>${l.address}<div class="muted">${l.notes || ''}</div></td>
+      <td><span class="status-badge">${l.status || ''}</span></td>
+      <td class="num">${money(l.list_price)}</td>
+      <td class="num">${fmtNum(l.days_on_market)}</td>
+      <td>${l.agent_name || ''}</td>
+    </tr>`).join('');
+}
+
+/* ---------- Pipeline ---------- */
+async function loadPipeline() {
+  const data = await get('/api/pipeline');
+  const stage = $('#pipeline-stage-table tbody');
+  const all = $('#pipeline-table tbody');
+  if (data.error) { stage.innerHTML = ''; all.innerHTML = ''; return; }
+
+  stage.innerHTML = (data.by_stage || []).map(s => `
+    <tr><td>${s.status}</td><td class="num">${fmtNum(s.cnt)}</td><td class="num">${money(s.total)}</td></tr>
+  `).join('') || '<tr><td colspan="3" class="empty">No deals yet.</td></tr>';
+
+  all.innerHTML = (data.pipeline || []).map(p => `
+    <tr>
+      <td>${p.title}<div class="muted">${p.notes || ''}</div></td>
+      <td><span class="status-badge">${p.status || ''}</span></td>
+      <td class="num">${money(p.value)}</td>
+      <td>${p.contact_name || ''}</td>
+      <td>${p.agent || ''}</td>
+    </tr>`).join('') || '<tr><td colspan="5" class="empty">No deals yet.</td></tr>';
+}
+
+/* ---------- Showings ---------- */
+async function loadShowings() {
+  const data = await get('/api/showings');
+  const tbody = $('#showings-table tbody');
+  if (data.error || !data.showings || !data.showings.length) {
+    tbody.innerHTML = '<tr><td colspan="5" class="empty">No showings yet.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = data.showings.map(s => `
+    <tr>
+      <td>${fmtDate(s.showing_datetime)}</td>
+      <td>${s.listing_address || ''}</td>
+      <td>${s.agent_name || ''}</td>
+      <td>${s.contact_name || ''}</td>
+      <td><span class="status-badge">${s.status || 'scheduled'}</span></td>
+    </tr>`).join('');
+}
+
+/* ---------- Commissions ---------- */
+async function loadCommissions() {
+  const data = await get('/api/commissions');
+  const byAgent = $('#commissions-by-agent-table tbody');
+  const tbody = $('#commissions-table tbody');
+  if (data.error) {
+    byAgent.innerHTML = '';
+    tbody.innerHTML = `<tr><td colspan="7" class="empty">${data.detail || data.error}</td></tr>`;
+    return;
+  }
+  byAgent.innerHTML = (data.by_agent || []).map(a => `
+    <tr><td>${a.agent_name}</td><td class="num">${fmtNum(a.cnt)}</td><td class="num">${money(a.net_total)}</td></tr>
+  `).join('') || '<tr><td colspan="3" class="empty">No commissions yet.</td></tr>';
+
+  tbody.innerHTML = (data.commissions || []).map(c => `
+    <tr>
+      <td>${c.deal_title || ''}</td>
+      <td>${c.agent_name || ''}</td>
+      <td class="num">${money(c.gross)}</td>
+      <td class="num">${c.split_pct != null ? c.split_pct + '%' : '—'}</td>
+      <td class="num">${money(c.net)}</td>
+      <td><span class="status-badge ${c.status === 'disputed' ? 'warn' : ''}">${c.status || ''}</span></td>
+      <td>${c.period_month || ''}</td>
+    </tr>`).join('') || '<tr><td colspan="7" class="empty">No commissions yet.</td></tr>';
+}
+
+/* ---------- Documents ---------- */
+async function loadDocuments() {
+  const data = await get('/api/documents');
+  const tbody = $('#documents-table tbody');
+  if (data.error || !data.documents || !data.documents.length) {
+    tbody.innerHTML = '<tr><td colspan="4" class="empty">No open document tasks.</td></tr>';
+    return;
+  }
+  tbody.innerHTML = data.documents.map(t => `
+    <tr>
+      <td>${t.description}</td>
+      <td><span class="status-badge ${t.priority === 'high' ? 'warn' : ''}">${t.priority || ''}</span></td>
+      <td>${t.due_date || ''}</td>
+      <td>${t.status || ''}</td>
+    </tr>`).join('');
+}
+
+/* ---------- Leads ---------- */
+async function loadLeads() {
+  const data = await get('/api/leads');
+  const funnel = $('#lead-funnel-table tbody');
+  const tbody = $('#leads-table tbody');
+  if (data.error) { funnel.innerHTML = ''; tbody.innerHTML = ''; return; }
+  funnel.innerHTML = (data.funnel || []).map(f => `
+    <tr><td>${f.status}</td><td class="num">${fmtNum(f.cnt)}</td></tr>
+  `).join('') || '<tr><td colspan="2" class="empty">No leads yet.</td></tr>';
+
+  tbody.innerHTML = (data.leads || []).map(l => `
+    <tr>
+      <td>${l.name}</td>
+      <td>${l.source || ''}</td>
+      <td><span class="status-badge">${l.status || ''}</span></td>
+      <td>${l.last_contacted_at || '—'}</td>
+      <td>${l.agent_assigned || '—'}</td>
+    </tr>`).join('') || '<tr><td colspan="5" class="empty">No leads yet.</td></tr>';
+}
+
+/* ---------- Settings ---------- */
+async function loadSettings() {
+  try {
+    const data = await get('/api/status');
+    if (data.connectors) {
+      $('#settings-connectors').textContent = data.connectors.join(', ');
+    }
+  } catch (e) { /* offline-tolerant */ }
+}
+
+/* ---------- boot ---------- */
+(async function init() {
+  try {
+    const me = await get('/api/me');
+    if (me.role) {
+      state.role = me.role; state.scope = me.scope; state.user = me.user;
+      const sel = document.getElementById('role-select');
+      if (sel) sel.value = me.role;
+    }
+  } catch (e) { /* offline-tolerant */ }
+  loadOverview();
+})();
+</script>
+
+</body>
+</html>

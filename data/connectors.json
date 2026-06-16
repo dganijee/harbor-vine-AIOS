@@ -1,0 +1,47 @@
+{
+  "connectors": {
+    "gmail": {
+      "active": false,
+      "last_sync": "2026-06-16T17:59:58.886466+00:00",
+      "fixture": "gmail.json",
+      "secrets": {
+        "client_id": "enc::v1:gAAAAABqMY7tvFlJPka6eMEqTcHVVIIUCU4KEjU1KyZis8kUPgQuSyUVhRN01PcYtdSdKV9W0-DRMxAt2Ej6MtwFWDWBYMFxDdDqGFl663bciMikeay0RnC_6lBk1AiZa5kayont2-fr1z_nGfLSSmen0JMx_WjZdw==",
+        "client_secret": "enc::v1:gAAAAABqMY7tshKKkS9nqqMD4OKlpa9kCcebzH_vUnk2AdJNuJaD8c6I8DtXtZTwDAUsRiGNhtVVozzphqZJ_2G980GLaedrCPyNVBcq6rtJ-oAuAfz06unLtpNt6sS8W6t15GOOtmkk",
+        "refresh_token": "enc::v1:gAAAAABqMY7tpZdn0171Ov4Nc9Dc1Gyv8i1fG1Pv20aaRAHz7U6v8weArnfxrO244UdV20b5EXqYCczKiTmTXDekzOK_n1kK-gYXLPL-hlfiWgJXgDbCKRQBvnbaPMiHj5JP_w48FC2t"
+      }
+    },
+    "google_calendar": {
+      "active": false,
+      "last_sync": "2026-06-16T17:59:58.892936+00:00",
+      "fixture": "gcal.json",
+      "secrets": {
+        "client_id": "enc::v1:gAAAAABqMY7tWs5veSk00I7zRNS54aGzgz9Sg0XYdL8bsebIO_1fPBr7sdbx6aupZ2L7sbuKsF3ATjolpprrTmnGx3ne9wgfFvJ6N9vs4n96nUDYFyvNcFznrJHFLR4aVTO-7gO15x1jpUxYu9OlpomMr0u0kQ_haQ==",
+        "client_secret": "enc::v1:gAAAAABqMY7tDIHPxq9QcR3rbDuduX778nemz1_lPbbZVkYWHdPIOSf30cjrwcz_1zAV5zIr2_iZ6UUXFal-hUQH-y6HMj1V7owPL4ZiFRa269vQHwkFbrjEvjyt9GEHVF_OkDYiZWoa",
+        "refresh_token": "enc::v1:gAAAAABqMY7tBQPMfhpbmGfqJsY2vm4hQV2wWeM7xMInoQfdRTyOa5bfrjRG2bWa9Ls6-nr-lJRCS3mStzN-d2ogY82408gcVJcDkDmW0v0t_JTilbS3l-s="
+      }
+    },
+    "google_sheets": {
+      "active": false,
+      "last_sync": "2026-06-16T17:59:58.899241+00:00",
+      "fixture": "sheets_pipeline.json",
+      "secrets": {
+        "client_id": "enc::v1:gAAAAABqMY7t4QmvrKTEBkTFLlbgHy-63ObHiFv7YwBBTA9Up_Lp5cKsOso9qWX9MKoy_QdGFLxetRdCprjZ_GUsQoq5BRjSvhdQhTJSLdxYkdPceGZth0JdvoiYtK4w7UtsGv5FRwgTXd0edOLO1fhMgZsfNkjWUg==",
+        "client_secret": "enc::v1:gAAAAABqMY7treMRyA7ZEEv5n9ewANQV6Ge4K-hqUKhJucNN2HLn1EhWUMHx7R1LLxXHT_fiwq_4_hkxEyq2A1d8AxeRwmEDxcFHEzGFhCeM_EO3dQFXQ6rJHEe3zlInEkdsqwq69RJ0",
+        "refresh_token": "enc::v1:gAAAAABqMY7tqK6S6zNIe5nooEge-k9aYkkWHvy8W3h0nydO3AByaRfbT5UKZjtbF8JnYwi815X8pS8x5fWecg3Gj0NilNB74qzISwEAX5gG2EXQT_dXvxYA6_Uk02Jr40vyMJWOUlYJ"
+      }
+    },
+    "qbo": {
+      "active": false,
+      "last_sync": "2026-06-16T17:59:58.903494+00:00",
+      "fixture": "qbo_commissions.json",
+      "secrets": {
+        "client_id": "enc::v1:gAAAAABqMY7tqagQgh0dUuq7SFSXu1MaUk353iL15-WcN9RcBdTco6gd4R9UpYNjfvRK6PQ66B0_9ATO0JQjzBdqUxBGGl9MnjLR2VRQ3-wYWevqNLWvcfU=",
+        "client_secret": "enc::v1:gAAAAABqMY7tl0wWbhn4Sr4HKUCPBib8oPSCvltepbtYjqvBVKDxW4Z283cH4XR8RWJuxhtERwrMY74SLdUn4NeOpYFRDGqhXmzPw9BY-jA26UoPR6IW0uM=",
+        "refresh_token": "enc::v1:gAAAAABqMY7t6WnoEa1Nfey7lKuGX6D_YTvgS13nUtD_eaXa2W-pNDDfEO63pUBdMcec2H3nGeUMNB0En2gZaodPDz7ouSjJfbYSo1SiBYkYZs5ernxfe48=",
+        "realm_id": "sandbox-qbo-realm-id-fake"
+      }
+    }
+  },
+  "onboarded": false,
+  "last_sync": null
+}

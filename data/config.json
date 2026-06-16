@@ -1,0 +1,122 @@
+{
+  "_comment": "Module toggle config \u2014 set to true/false to enable/disable features. Dashboard reads this to show/hide tabs and components.",
+  "modules": {
+    "pipeline": true,
+    "alerts": true,
+    "chat_widget": true,
+    "exec_report": true,
+    "payment_history": true,
+    "notifications": true,
+    "anomaly_detection": true,
+    "approval_workflow": true,
+    "document_classification": true,
+    "daily_snapshot": true,
+    "admin_panel": true,
+    "data_export": true,
+    "role_based_access": true,
+    "exception_audit": true,
+    "bounce_report": false,
+    "employee_onboarding": false,
+    "invoice_intake": false,
+    "labor_revenue": false,
+    "event_pnl": false,
+    "multi_location": false
+  },
+  "theme": {
+    "mode": "light",
+    "brand_css": "brand.css"
+  },
+  "white_label": {
+    "company_name": "Harbor & Vine Realty",
+    "logo_url": "",
+    "favicon_url": "",
+    "primary_color": "#ed2127",
+    "powered_by": "Powered by Fellowship Automation",
+    "show_powered_by": true
+  },
+  "auth": {
+    "enabled": true,
+    "type": "basic",
+    "session_timeout_hours": 24,
+    "secret": "99e0b735218ed9ef41fbbdc681ad7a3ae9d966de2afd481e9c25da156aed02a9",
+    "users": {
+      "Marisol Trent": "sha256:bc44233e09523a68a6391a1771d195527a7639f9188bb545da39e94d7bcd73e9",
+      "Devin Okafor": "sha256:62f9a46002cf1b1de646861376d5fffb1da38cec3fdb92d9cbdb331ab713706a",
+      "Carol Benitez": "sha256:4c1a7148e8ce1b632221c27697af9b30337cc2772ce523f5b2fd8aa67c68187b",
+      "Priya Raman": "sha256:4aa2964b3658c5df126e8707ec24ab9cffb22c93025656e35ee2c83f475fe6d1",
+      "Jess Holloway": "sha256:cb3d39569a9fef290d3b7e3cea72df8c25f1d948d3161c5e59ad78d10fbd34d2",
+      "Tom\u00e1s Vidal": "sha256:4a6e4d95b29fe7cc2c9732cb6bed05bea0406af819ce45f091e6e6c60577fc7d"
+    }
+  },
+  "notifications": {
+    "channels": [],
+    "triggers": []
+  },
+  "sync": {
+    "schedule": "hourly",
+    "source": null,
+    "sources": [
+      {
+        "name": "google_sheets_pipeline",
+        "url": "https://docs.google.com/spreadsheets/d/SANDBOX_FIXTURE_ONLY",
+        "target_table": "pipeline",
+        "field_mapping": {
+          "external_id": "deal_id",
+          "title": "deal_title",
+          "status": "stage",
+          "value": "price",
+          "agent": "agent_name"
+        },
+        "_sandbox_note": "Sandbox: backed by fixtures/sheets_pipeline.json \u2014 no live API call. Production replaces this URL + activates the connector."
+      }
+    ]
+  },
+  "_connectors": {
+    "gmail": {
+      "enabled": false,
+      "configured": false
+    },
+    "google_calendar": {
+      "enabled": false,
+      "configured": false
+    },
+    "google_sheets": {
+      "enabled": false,
+      "configured": false
+    },
+    "qbo": {
+      "enabled": false,
+      "configured": false
+    }
+  },
+  "dashboard_tabs": [
+    "Overview",
+    "Listings",
+    "Pipeline",
+    "Showings",
+    "Commissions",
+    "Documents",
+    "Leads",
+    "Settings"
+  ],
+  "kpis": [
+    "active_listings",
+    "pipeline_volume_usd",
+    "closings_this_month",
+    "commission_earned_mtd",
+    "new_leads_this_week"
+  ],
+  "automations": [
+    "morning_brief",
+    "stalled_deal_monitor",
+    "showing_conflict_monitor",
+    "commission_dispute_monitor",
+    "lead_followup_monitor"
+  ],
+  "thresholds": {
+    "stalled_med_days": 7,
+    "stalled_high_days": 14,
+    "lead_followup_days": 5,
+    "listing_dom_days": 90
+  }
+}

@@ -1,0 +1,45 @@
+{
+  "_meta": {
+    "source": "google_calendar",
+    "description": "Sample calendar snapshot for Harbor & Vine Realty sandbox build. Fabricated. No real PII.",
+    "generated_for": "Phase D Stage 1 dry-run",
+    "deliberate_conflicts": [
+      {
+        "date": "2026-06-19T14:00:00-04:00",
+        "address": "248 Cliffside Lane",
+        "agents": ["Jess Holloway", "Tomás Vidal"],
+        "note": "Both agents booked the same showing slot — surfaces in anomaly_detection module."
+      },
+      {
+        "date": "2026-06-23T11:30:00-04:00",
+        "address": "84 Bayview",
+        "agents": ["Jess Holloway", "Tomás Vidal"],
+        "note": "Second conflict on the disputed-commission listing — clue for pain point #2 and #3."
+      }
+    ]
+  },
+  "contacts": [],
+  "pipeline": [],
+  "tasks": [
+    {"external_id": "gcal:evt-001", "description": "Showing — 248 Cliffside Lane (Jess Holloway, w/ S. Park)", "status": "scheduled", "priority": "medium", "due_date": "2026-06-19"},
+    {"external_id": "gcal:evt-002", "description": "Showing — 248 Cliffside Lane (Tomás Vidal, w/ R. Akhtar)", "status": "scheduled", "priority": "medium", "due_date": "2026-06-19"},
+    {"external_id": "gcal:evt-003", "description": "Closing — 511 Harborline Ave (Tomás Vidal)", "status": "scheduled", "priority": "high", "due_date": "2026-06-18"},
+    {"external_id": "gcal:evt-004", "description": "Listing appt — 12 Heronfield (Marisol Trent, w/ R. Duarte)", "status": "scheduled", "priority": "high", "due_date": "2026-06-16"},
+    {"external_id": "gcal:evt-005", "description": "Team standup (all hands)", "status": "scheduled", "priority": "low", "due_date": "2026-06-16"},
+    {"external_id": "gcal:evt-006", "description": "Showing — 41 Driftwood Terrace (Jess Holloway, w/ R. Akhtar)", "status": "scheduled", "priority": "medium", "due_date": "2026-06-17"},
+    {"external_id": "gcal:evt-007", "description": "Inspection — 318 Magnolia (Priya Raman coord)", "status": "scheduled", "priority": "medium", "due_date": "2026-06-17"},
+    {"external_id": "gcal:evt-008", "description": "Closing — 84 Bayview (Jess Holloway)", "status": "scheduled", "priority": "high", "due_date": "2026-06-20"},
+    {"external_id": "gcal:evt-009", "description": "Showing — 84 Bayview (Jess Holloway, follow-up)", "status": "scheduled", "priority": "medium", "due_date": "2026-06-23"},
+    {"external_id": "gcal:evt-010", "description": "Showing — 84 Bayview (Tomás Vidal, w/ K. Morales)", "status": "scheduled", "priority": "medium", "due_date": "2026-06-23"},
+    {"external_id": "gcal:evt-011", "description": "Open house — 1402 Seabreeze Drive (Tomás Vidal)", "status": "scheduled", "priority": "medium", "due_date": "2026-06-21"},
+    {"external_id": "gcal:evt-012", "description": "Closing — 712 Larkstone Way (Marisol Trent)", "status": "scheduled", "priority": "high", "due_date": "2026-06-25"},
+    {"external_id": "gcal:evt-013", "description": "Listing appt — 89 Coral Cove (Jess Holloway)", "status": "scheduled", "priority": "high", "due_date": "2026-06-22"},
+    {"external_id": "gcal:evt-014", "description": "Team standup (all hands)", "status": "scheduled", "priority": "low", "due_date": "2026-06-23"},
+    {"external_id": "gcal:evt-015", "description": "Showing — 27 Marsh Hollow Lane (Tomás Vidal, w/ B. Whitfield)", "status": "scheduled", "priority": "high", "due_date": "2026-06-18"},
+    {"external_id": "gcal:evt-016", "description": "Broker preview — 1402 Seabreeze Drive", "status": "scheduled", "priority": "medium", "due_date": "2026-06-20"},
+    {"external_id": "gcal:evt-017", "description": "Showing — 89 Coral Cove (Jess Holloway, w/ S. Park)", "status": "scheduled", "priority": "medium", "due_date": "2026-06-22"}
+  ],
+  "metrics": [
+    {"name": "showings_scheduled_7d", "value": 7}
+  ]
+}

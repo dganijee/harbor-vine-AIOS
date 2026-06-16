@@ -1,0 +1,40 @@
+{
+  "_meta": {
+    "source": "google_sheets",
+    "description": "Sample pipeline tracker for Harbor & Vine Realty sandbox build. Fabricated addresses and clients. No real PII.",
+    "generated_for": "Phase D Stage 1 dry-run",
+    "totals_note": "23 deals listed; aggregate open volume tunes to ~$12.4M which matches the wireframe headline metric."
+  },
+  "contacts": [],
+  "pipeline": [
+    {"external_id": "sheet:row-001", "title": "248 Cliffside Lane",       "status": "Listed",   "value": 1850000, "contact_name": "Sandra Park",      "agent": "Jess Holloway", "notes": "Coastal mid-market; lead from Zillow."},
+    {"external_id": "sheet:row-002", "title": "84 Bayview",               "status": "Closing",  "value": 2150000, "contact_name": "Wendy Fortier",    "agent": "Jess Holloway", "notes": "Disputed primary agent vs Tomás; commission flagged."},
+    {"external_id": "sheet:row-003", "title": "318 Magnolia",             "status": "Pending",  "value": 945000,  "contact_name": "Elaine Cho",       "agent": "Jess Holloway", "notes": "Awaiting disclosure pack send."},
+    {"external_id": "sheet:row-004", "title": "12 Heronfield",            "status": "New",      "value": 1250000, "contact_name": "Ramon Duarte",     "agent": "Marisol Trent", "notes": "Listing appt 6/16."},
+    {"external_id": "sheet:row-005", "title": "511 Harborline Ave",       "status": "Closing",  "value": 1675000, "contact_name": "P. Saito",         "agent": "Tomás Vidal",   "notes": "Closing 6/18."},
+    {"external_id": "sheet:row-006", "title": "41 Driftwood Terrace",     "status": "Showing",  "value": 820000,  "contact_name": "Rina Akhtar",      "agent": "Jess Holloway", "notes": "Buyer wants 3pm 6/17."},
+    {"external_id": "sheet:row-007", "title": "712 Larkstone Way",        "status": "Closing",  "value": 1320000, "contact_name": "M. Greene",        "agent": "Marisol Trent", "notes": "Closing 6/25."},
+    {"external_id": "sheet:row-008", "title": "1402 Seabreeze Drive",     "status": "Listed",   "value": 2850000, "contact_name": "L. Voss",          "agent": "Tomás Vidal",   "notes": "Luxury; open house 6/21."},
+    {"external_id": "sheet:row-009", "title": "27 Marsh Hollow Lane",     "status": "Offer",    "value": 1395000, "contact_name": "B. Whitfield",     "agent": "Tomás Vidal",   "notes": "Pre-approved $1.4M."},
+    {"external_id": "sheet:row-010", "title": "89 Coral Cove",            "status": "New",      "value": 1075000, "contact_name": "Kenji Morales",    "agent": "Jess Holloway", "notes": "Referral from M. Greene."},
+    {"external_id": "sheet:row-011", "title": "63 Tidepool Court",        "status": "Listed",   "value": 730000,  "contact_name": "A. Heinrich",      "agent": "Tomás Vidal",   "notes": "Mid-market starter."},
+    {"external_id": "sheet:row-012", "title": "199 Saltgrass Road",       "status": "Showing",  "value": 615000,  "contact_name": "D. Cobb",          "agent": "Jess Holloway", "notes": "First-time buyer."},
+    {"external_id": "sheet:row-013", "title": "47 Anchorpoint",           "status": "Pending",  "value": 1480000, "contact_name": "N. Iqbal",         "agent": "Tomás Vidal",   "notes": "Inspection clear."},
+    {"external_id": "sheet:row-014", "title": "5 Promontory Pl",          "status": "Listed",   "value": 3450000, "contact_name": "C. Halverson",     "agent": "Marisol Trent", "notes": "Luxury; oceanfront; staging next week."},
+    {"external_id": "sheet:row-015", "title": "318 Beacon Hill Rd",       "status": "Closed",   "value": 1140000, "contact_name": "J. Vance",         "agent": "Jess Holloway", "notes": "Closed 6/06."},
+    {"external_id": "sheet:row-016", "title": "1101 Estuary Ln",          "status": "Offer",    "value": 880000,  "contact_name": "S. Otieno",        "agent": "Jess Holloway", "notes": "Counter at $865k."},
+    {"external_id": "sheet:row-017", "title": "76 Quartz Pointe",         "status": "Listed",   "value": 1995000, "contact_name": "T. Bachmann",      "agent": "Tomás Vidal",   "notes": "Luxury condo."},
+    {"external_id": "sheet:row-018", "title": "230 Periwinkle Way",       "status": "New",      "value": 690000,  "contact_name": "F. Petrov",        "agent": "Jess Holloway", "notes": "Just listed 6/14."},
+    {"external_id": "sheet:row-019", "title": "8 Lighthouse Crescent",    "status": "Pending",  "value": 1620000, "contact_name": "G. Albright",      "agent": "Marisol Trent", "notes": "Mortgage cleared."},
+    {"external_id": "sheet:row-020", "title": "414 Mistral Court",        "status": "Showing",  "value": 1180000, "contact_name": "H. Quintero",      "agent": "Tomás Vidal",   "notes": "Two showings booked this week."},
+    {"external_id": "sheet:row-021", "title": "59 Salt Marsh Drive",      "status": "Closed",   "value": 760000,  "contact_name": "R. Lyons",         "agent": "Tomás Vidal",   "notes": "Closed 6/02."},
+    {"external_id": "sheet:row-022", "title": "1820 Crestwood",           "status": "Offer",    "value": 2240000, "contact_name": "K. Mendez",        "agent": "Marisol Trent", "notes": "Luxury; multi-offer scenario."},
+    {"external_id": "sheet:row-023", "title": "302 Cordage Mill",         "status": "Listed",   "value": 1095000, "contact_name": "E. Hsu",           "agent": "Jess Holloway", "notes": "Conversion loft."}
+  ],
+  "tasks": [],
+  "metrics": [
+    {"name": "pipeline_volume_usd", "value": 12400000},
+    {"name": "active_listings", "value": 31},
+    {"name": "avg_days_on_market", "value": 48}
+  ]
+}
