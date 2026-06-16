@@ -1,0 +1,59 @@
+﻿
+Running AIOS QA on: C:\Users\dgani\Desktop\harbor-vine-AIOS
+
+
+============================================================
+AIOS QA Results: 43/47 passed
+============================================================
+  [+] Required file: engine/data_os.py � OK
+  [+] Required file: data/config.json � OK
+  [+] Required file: context/business-info.md � OK
+  [+] Required file: context/strategy.md � OK
+  [+] Required file: soul/SOUL.md � OK
+  [+] Required file: soul/IDENTITY.md � OK
+  [+] Required file: requirements.txt � OK
+  [+] Optional file: data/ops.db � OK
+  [+] Optional file: outputs/dashboard.html � OK
+  [+] Optional file: scripts/server.py � OK
+  [+] Optional file: memory/MEMORY.md � OK
+  [+] Optional file: context/personal-info.md � OK
+  [+] Database exists � OK
+  [+] Core tables present � 3/7 found: alerts, audit_log, users
+  [+] Sample data loaded � Data found
+  [+] Database WAL mode � journal_mode=wal
+  [+] Config is valid JSON � OK
+  [+] Config has 'white_label' � OK
+  [+] White label company name set � Harbor & Vine Realty
+  [+] Context: context/business-info.md � 3794 chars
+  [+] Context: context/strategy.md � 4431 chars
+  [+] Soul: soul/SOUL.md � 2385 chars
+  [+] Soul: soul/IDENTITY.md � 1146 chars
+  [+] Brand colors configured � In config.json
+  [+] Sync sources configured � 1 source(s)
+  [+] Sync source 'google_sheets_pipeline' valid � url=OK, mapping=OK, table=OK
+  [+] Modules enabled � 14: pipeline, alerts, chat_widget, exec_report, payment_history, notifications, anomaly_detection, approval_workflow, document_classification, daily_snapshot, admin_panel, data_export, role_based_access, exception_audit
+  [+] Module 'pipeline' has implementation � Found
+  [+] Module 'alerts' has implementation � Found
+  [+] Module 'chat_widget' has implementation � Found
+  [+] Module 'exec_report' has implementation � Found
+  [+] Module 'payment_history' has implementation � Found
+  [+] Module 'notifications' has implementation � Found
+  [+] Module 'anomaly_detection' has implementation � Found
+  [+] Module 'approval_workflow' has implementation � Found
+  [+] Module 'document_classification' has implementation � Found
+  [+] Module 'daily_snapshot' has implementation � Found
+  [X] Module 'admin_panel' has implementation � No implementation file found
+  [X] Module 'data_export' has implementation � No implementation file found
+  [X] Module 'role_based_access' has implementation � No implementation file found
+  [+] Module 'exception_audit' has implementation � Found
+  [+] Auth secret set � OK
+  [+] Auth users configured � 6 user(s)
+  [X] Passwords hashed � 6 user(s) with plain-text passwords
+  [+] requirements.txt � 8 packages listed
+  [+] Requirement: flask � Listed
+  [+] Requirement: requests � Listed
+
+============================================================
+FAILED: 4 issue(s) found � review above
+============================================================
+
