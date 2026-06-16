@@ -4,9 +4,12 @@ Harbor & Vine — Authentication layer (client-build-grade).
 
 Adapted from the bundle 1 canonical auth.py for our scaffold's layout:
 - The user ROSTER lives in data/users.json (not config.json). Each user
-  carries a `password_hash` and `password_salt`. config.json holds only
-  the auth toggle + signing secret.
-- Passwords stored as sha256(salt + password) hashes.
+  carries a single `password_hash` field (the salt is embedded in the
+  argon2id hash format — no separate column). config.json holds only the
+  auth toggle + signing secret.
+- Passwords hashed with **argon2id** (`$argon2id$v=19$m=19456,t=2,p=1`,
+  OWASP minimum parameters); the salt is embedded in the hash format.
+  We use `argon2.PasswordHasher` from `argon2-cffi`.
 - Session tokens are HMAC-SHA256-signed JWT-like payloads (zero ext deps).
 - flask_middleware(app) registers a @before_request `check_auth()` that
   protects every route except /login, /api/login, /logout, /static/* and
@@ -20,20 +23,55 @@ Production posture (no sandbox concessions):
 - First-run password flow: engine/init_passwords.py walks users.json and
   prompts the operator for each missing password_hash. In the sandbox we
   pre-set deterministic test passwords (documented loudly).
+- Transparent rehash: PasswordHasher.check_needs_rehash() is called on
+  every successful verify. If OWASP parameters change later, the next
+  successful login transparently upgrades the stored hash.
 """
 
 import json
 import os
-import hashlib
 import secrets
 import time
 import hmac
+import hashlib
 import base64
 import logging
 from functools import wraps
 
+from argon2 import PasswordHasher
+from argon2.exceptions import (
+    VerifyMismatchError,
+    InvalidHashError,
+    InvalidHash,
+    VerificationError,
+    Argon2Error,
+)
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("auth")
+
+# OWASP recommended minimum parameters for argon2id (2024+ cheat sheet).
+# Pass these EXPLICITLY even if they're defaults so the choice is auditable.
+#   time_cost=2        -> 2 iterations
+#   memory_cost=19456  -> 19 MiB (the OWASP floor for argon2id)
+#   parallelism=1      -> 1 lane (server-side; raise if multi-core trusted)
+#   hash_len=32        -> 32-byte output
+#   salt_len=16        -> 16-byte salt embedded in the hash
+ARGON2_TIME_COST = 2
+ARGON2_MEMORY_COST = 19456
+ARGON2_PARALLELISM = 1
+ARGON2_HASH_LEN = 32
+ARGON2_SALT_LEN = 16
+
+# Single PasswordHasher used everywhere — cheap to construct but reusing
+# it keeps params consistent across hash + verify + needs_rehash calls.
+_PH = PasswordHasher(
+    time_cost=ARGON2_TIME_COST,
+    memory_cost=ARGON2_MEMORY_COST,
+    parallelism=ARGON2_PARALLELISM,
+    hash_len=ARGON2_HASH_LEN,
+    salt_len=ARGON2_SALT_LEN,
+)
 
 
 class Auth:
@@ -96,31 +134,60 @@ class Auth:
                 return u
         return None
 
-    # ── Password hashing ───────────────────────────────────────────
-
-    @staticmethod
-    def _hash(password, salt):
-        return hashlib.sha256((salt + password).encode("utf-8")).hexdigest()
+    # ── Password hashing (argon2id, OWASP minimum params) ──────────
 
     def hash_password(self, password, salt=None):
-        """Salt + sha256 hash. Salt is generated if not provided."""
-        salt = salt or secrets.token_hex(8)
+        """Hash a password with argon2id.
+
+        Returns `{"password_hash": "$argon2id$v=19$m=...,t=...,p=...$<salt>$<hash>"}`.
+        The salt is embedded in the argon2 hash format — no separate
+        column. `salt` kwarg is accepted for API compatibility but ignored
+        (argon2id generates its own cryptographically-random salt).
+        """
         return {
-            "password_hash": self._hash(password, salt),
-            "password_salt": salt,
+            "password_hash": _PH.hash(password),
         }
 
     def verify_password(self, username, password):
-        """Verify a username + password pair against users.json."""
+        """Verify a username + password pair against users.json.
+
+        Uses argon2.PasswordHasher.verify(). On success, also checks
+        check_needs_rehash() and transparently re-hashes + persists if
+        the stored parameters are weaker than the current OWASP minimums.
+        """
         user = self.get_user(username)
         if not user:
             return False
         stored = user.get("password_hash")
-        salt = user.get("password_salt") or ""
         if not stored:
             return False
-        expected = self._hash(password, salt)
-        return hmac.compare_digest(expected, stored)
+        try:
+            _PH.verify(stored, password)
+        except VerifyMismatchError:
+            return False
+        except (InvalidHashError, InvalidHash, VerificationError, Argon2Error):
+            # Defensive: don't leak whether the failure was format vs mismatch.
+            return False
+        except Exception:
+            # Catch-all: same posture — fail closed without leaking detail.
+            return False
+
+        # Transparent rehash if OWASP params have been raised since the
+        # stored hash was written.
+        try:
+            if _PH.check_needs_rehash(stored):
+                new_hash = _PH.hash(password)
+                user["password_hash"] = new_hash
+                # Persist back to disk so the upgrade sticks.
+                try:
+                    self._save_users()
+                except Exception as e:
+                    logger.warning(f"needs_rehash: persist failed: {e}")
+        except Exception as e:
+            # Don't fail the login just because the rehash check exploded.
+            logger.warning(f"needs_rehash: check failed: {e}")
+
+        return True
 
     # ── Token ops ──────────────────────────────────────────────────
 

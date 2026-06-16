@@ -1,5 +1,5 @@
 {
-  "_comment": "Module toggle config \u2014 set to true/false to enable/disable features. Dashboard reads this to show/hide tabs and components.",
+  "_comment": "Module toggle config — set to true/false to enable/disable features. Dashboard reads this to show/hide tabs and components.",
   "modules": {
     "pipeline": true,
     "alerts": true,
@@ -40,12 +40,12 @@
     "session_timeout_hours": 24,
     "secret": "99e0b735218ed9ef41fbbdc681ad7a3ae9d966de2afd481e9c25da156aed02a9",
     "users": {
-      "Marisol Trent": "sha256:bc44233e09523a68a6391a1771d195527a7639f9188bb545da39e94d7bcd73e9",
-      "Devin Okafor": "sha256:62f9a46002cf1b1de646861376d5fffb1da38cec3fdb92d9cbdb331ab713706a",
-      "Carol Benitez": "sha256:4c1a7148e8ce1b632221c27697af9b30337cc2772ce523f5b2fd8aa67c68187b",
-      "Priya Raman": "sha256:4aa2964b3658c5df126e8707ec24ab9cffb22c93025656e35ee2c83f475fe6d1",
-      "Jess Holloway": "sha256:cb3d39569a9fef290d3b7e3cea72df8c25f1d948d3161c5e59ad78d10fbd34d2",
-      "Tom\u00e1s Vidal": "sha256:4a6e4d95b29fe7cc2c9732cb6bed05bea0406af819ce45f091e6e6c60577fc7d"
+      "Marisol Trent": "argon2:$argon2id$v=19$m=19456,t=2,p=1$vZYU9EpxP2GdzI2g5pfSQQ$s7Ke+u+XuW+h9kz3aoL1FkDOhzcxIRHeJeCj0VVYK6A",
+      "Devin Okafor": "argon2:$argon2id$v=19$m=19456,t=2,p=1$gdF+hRsjYC60ZWAN2VQiJA$xtI5OoqarOIugGh0UBkVhQV9h6QsboygsXEzsrmKuyc",
+      "Carol Benitez": "argon2:$argon2id$v=19$m=19456,t=2,p=1$XQCNKyXV0UN8UNEAuao8Ww$jfwJTlo0IQpB+C87/GXeYWb7mXhPWx2rQ54Rm0rbJk8",
+      "Priya Raman": "argon2:$argon2id$v=19$m=19456,t=2,p=1$/eeFMX4FPS9nZW5vZapFtA$MRAWmDLx65TFBfvjnvdulJ84otLrCfc/Pv75hiVKTC4",
+      "Jess Holloway": "argon2:$argon2id$v=19$m=19456,t=2,p=1$kYZUEyuQ7Q6gsehClHJdsQ$isKIo9gLkwI8o+QeXhiqfHBtG/TvCiYbsAyojZqFWeM",
+      "Tomás Vidal": "argon2:$argon2id$v=19$m=19456,t=2,p=1$/HTwk9JRY1hHNAZsny7W1w$RSyN+JBAdhjRrKo3/O06+wb0QNftuEYdUcNci3dTdZQ"
     }
   },
   "notifications": {
@@ -67,7 +67,7 @@
           "value": "price",
           "agent": "agent_name"
         },
-        "_sandbox_note": "Sandbox: backed by fixtures/sheets_pipeline.json \u2014 no live API call. Production replaces this URL + activates the connector."
+        "_sandbox_note": "Sandbox: backed by fixtures/sheets_pipeline.json — no live API call. Production replaces this URL + activates the connector."
       }
     ]
   },

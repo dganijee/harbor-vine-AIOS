@@ -19,7 +19,9 @@ def is_enabled():
 
 def get_user_roster():
     """Return the full user roster (name + role) for the admin panel.
-    Strips password_hash / password_salt before returning."""
+    Strips password_hash before returning. (password_salt is no longer
+    stored — argon2id embeds the salt in the hash format — but the key
+    is still scrubbed defensively in case any legacy row carries it.)"""
     if not _USERS_PATH.exists():
         return []
     with open(_USERS_PATH, "r", encoding="utf-8") as f:

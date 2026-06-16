@@ -3,12 +3,19 @@ Harbor & Vine — First-run password initialization.
 
 Walks data/users.json. For each user missing `password_hash`:
 - In production: prompts the operator on stdin (Sentinel rule 41 — no
-  default password ships).
+  default password ships). Run with `--interactive`.
 - In the SANDBOX: sets a deterministic test password keyed off the role
   (e.g. password_owner). These are documented loudly as TEST credentials,
   not real ones. The operator (and Sentinel) know.
 
 This is idempotent: users that already carry a password_hash are skipped.
+
+Hashing: **argon2id** via `argon2-cffi`, OWASP minimum parameters
+(time_cost=2, memory_cost=19456 KiB, parallelism=1, hash_len=32,
+salt_len=16). The salt is embedded in the argon2 hash format
+(`$argon2id$v=19$m=19456,t=2,p=1$<salt>$<hash>`) — no separate
+password_salt column. argon2id is the OWASP first-recommendation for
+new password hashing (memory-hard, side-channel-resistant).
 """
 
 import json
@@ -86,7 +93,10 @@ def run(interactive=False):
 
         h = auth.hash_password(pwd)
         u["password_hash"] = h["password_hash"]
-        u["password_salt"] = h["password_salt"]
+        # argon2id embeds the salt in the hash format; remove any legacy
+        # password_salt field that survived from an earlier sha256 pass.
+        if "password_salt" in u:
+            del u["password_salt"]
         set_count += 1
         test_creds[role] = pwd
 

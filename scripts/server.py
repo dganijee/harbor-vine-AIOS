@@ -10,8 +10,10 @@ status.
 Sandbox: binds to 127.0.0.1:8001 only.
 
 Security posture (client-build-grade — promoted from sandbox 2026-06-16):
-- Auth: enabled. Production-style sha256+salt hashing, HMAC-signed
-  session tokens. Wired via templates/backend/auth.flask_middleware().
+- Auth: enabled. Passwords hashed with argon2id (OWASP minimum params:
+  $argon2id$v=19$m=19456,t=2,p=1; salt embedded in hash format) via
+  argon2-cffi; HMAC-signed session tokens. Wired via
+  templates/backend/auth.flask_middleware().
 - CSRF: double-submit cookie pattern (X-CSRF-Token header echoes the
   csrf_token cookie, both signed with FLASK_SECRET_KEY). Bypassed on
   /api/login (bootstrap entry).
@@ -147,7 +149,12 @@ def _current_role():
 
 def _strip_sensitive(user):
     """Remove password_hash / password_salt from a user dict before
-    sending it to a client. Defensive — never leak hashes."""
+    sending it to a client. Defensive — never leak hashes.
+
+    password_salt is no longer stored (argon2id embeds the salt in the
+    hash format) but the key is kept here as a safety belt for any
+    legacy roster row that wasn't re-derived.
+    """
     if not user:
         return user
     safe = {k: v for k, v in user.items()

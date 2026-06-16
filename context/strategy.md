@@ -76,7 +76,7 @@
 - Phase F (deploy) gated; no `deploy_aios.sh` execution.
 
 ## Security Posture (client-build-grade, 2026-06-16)
-- **Authentication enabled.** `templates/backend/auth.flask_middleware()` gates every route except `/login`, `/api/login`, `/logout`, `/brand.css`, `/static/*`. Passwords are sha256(salt + password) — see `data/users.json`. Session tokens are HMAC-SHA256-signed JWT-like payloads.
+- **Authentication enabled.** `templates/backend/auth.flask_middleware()` gates every route except `/login`, `/api/login`, `/logout`, `/brand.css`, `/static/*`. Passwords are hashed with **argon2id** (`$argon2id$v=19$m=19456,t=2,p=1`, OWASP minimum parameters) via `argon2-cffi`; the salt is embedded in the hash format (no separate column) — see `data/users.json`. Successful logins call `PasswordHasher.check_needs_rehash()` to transparently upgrade hashes if OWASP parameters tighten. Session tokens are HMAC-SHA256-signed JWT-like payloads.
 - **CSRF enforced** on every state-changing endpoint via double-submit cookie pattern (X-CSRF-Token header echoes `csrf_token` cookie; both signed with `FLASK_SECRET_KEY`).
 - **`FLASK_SECRET_KEY` fails closed.** Server refuses to boot if the env var is missing; `scripts/startup.py` bootstraps `.env` on first run.
 - **Connector credentials encrypted at rest** via Fernet with the `enc::v1:` tag prefix. Master key in `AIOS_MASTER_KEY` (Fernet-generated, `.env`-persisted, gitignored); per-build derived key uses PBKDF2-HMAC-SHA256(100,000 iters) salted with `aios-build-harbor-vine`. Encryption migration `engine/encrypt_config.py` has RUN against `data/connectors.json` — `grep "enc::"` returns > 0.

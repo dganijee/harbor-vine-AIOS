@@ -50,7 +50,7 @@
 This scaffold runs **with auth disabled** (`config.json` → `auth.enabled = false`) so the offline dashboard can be opened locally without a login screen. That means:
 
 - **No `check_auth()` decorator is wired on any route in this sandbox.** Role is read from the Flask session and only drives RBAC *scoping* — not identity verification. Anyone with a session can call `/api/role_switch` and assume any role. This is intentional for the sandbox demo.
-- **No `templates/backend/auth.py` ships in this sandbox.** That file is the production-only auth layer (sha256 password hash lookup against `data/users.json` + HMAC-signed session tokens, mounted via `flask_middleware(app)` at startup) referenced in the playbook's canonical scaffold. It will be added in a later wiring pass, not in this build.
+- **No `templates/backend/auth.py` ships in this sandbox.** That file is the production-only auth layer (argon2id password hash lookup against `data/users.json` + HMAC-signed session tokens, mounted via `flask_middleware(app)` at startup) referenced in the playbook's canonical scaffold. It will be added in a later wiring pass, not in this build.
 - **`data/users.json` is the user roster** (name, role, visible_tabs). It is NOT a credential store in the sandbox — no password fields, no first-run setup flow. Production builds add a `password_hash` column populated on the user's first login.
 - **First-run "set your own password" flow (Sentinel rule 41)** is a production-build requirement, not a sandbox one. It lives alongside `templates/backend/auth.py`.
 
