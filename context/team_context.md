@@ -14,7 +14,7 @@
 - **Daily view:** Overview + Pipeline + Showings. Cares about agent performance + deal velocity + showings throughput.
 - **Tone preference:** collaborative-peer to Marisol; more operational than executive.
 - **Notifications:** dashboard + Telegram brief.
-- **Hard rules:** can see commission TOTALS per agent, NOT split breakdowns or accounting entries. The server strips `split_pct` from `/api/commissions` for this role.
+- **Hard rules:** Sees no commission data at all per intake's "no payroll/financials" framing. Commissions tab hidden via visible_tabs; `/api/commissions` returns 403. (Atlas finding #2, 2026-06-16.)
 
 ## Carol Benitez — Bookkeeper / Accounting (`accounting`)
 - **Daily view:** Commissions tab. Surface: pending splits, QBO sync status, monthly reconciliation gaps.
@@ -45,18 +45,15 @@
 
 ---
 
-## Sandbox auth posture (this build)
+## Auth posture (this build — client-build-grade, post-Atlas patches)
 
-This scaffold runs **with auth disabled** (`config.json` → `auth.enabled = false`) so the offline dashboard can be opened locally without a login screen. That means:
+- **Auth enabled.** `config.json → auth.enabled = true`. `templates/backend/auth.flask_middleware(app)` is mounted at server boot and gates every route except `/login`, `/api/login`, `/logout`, `/brand.css`, `/static/*`, `/manifest.json`, `/icon-*.png`.
+- **Password hashing:** argon2id with OWASP minimum params (`$argon2id$v=19$m=19456,t=2,p=1`). Salt embedded in the hash format; transparent rehash via `PasswordHasher.check_needs_rehash()` on every successful login.
+- **Authority gate (Atlas finding #1 fix, 2026-06-16):** the effective role at every request is derived server-side from `session['authenticated_username']` → `data/users.json` lookup. `/api/role_switch` is owner-only and may only *narrow* the effective role (preview). Non-owner authenticated callers get 403 from `/api/role_switch`. **No client-settable session field controls authority.**
+- **CSRF (Atlas finding #5 fix, 2026-06-16):** session-anchored double-submit cookie. Token format `<sha256(aios_token)[:32]>.<nonce>.<hmac>`. A CSRF token from one session cannot be reused after re-login.
+- **Login rate limit (Atlas finding #4 fix, 2026-06-16):** in-process per-IP, max 5 failures / 15 min → 429 + `Retry-After`. Backed by SQLite `login_attempts` table.
+- **Cookie hardening (Atlas finding #3 fix, 2026-06-16):** `aios_token` is `httponly=True` always; `csrf_token` is `httponly=False` (JS must read it). Both default `samesite=Lax`. `Secure` flag env-gated via `AIOS_SECURE_COOKIES`, `request.is_secure` (TLS), or `data/config.json → cookies.secure`. Sandbox loopback default is `secure=false` so HTTP works.
 
-- **No `check_auth()` decorator is wired on any route in this sandbox.** Role is read from the Flask session and only drives RBAC *scoping* — not identity verification. Anyone with a session can call `/api/role_switch` and assume any role. This is intentional for the sandbox demo.
-- **No `templates/backend/auth.py` ships in this sandbox.** That file is the production-only auth layer (argon2id password hash lookup against `data/users.json` + HMAC-signed session tokens, mounted via `flask_middleware(app)` at startup) referenced in the playbook's canonical scaffold. It will be added in a later wiring pass, not in this build.
-- **`data/users.json` is the user roster** (name, role, visible_tabs). It is NOT a credential store in the sandbox — no password fields, no first-run setup flow. Production builds add a `password_hash` column populated on the user's first login.
-- **First-run "set your own password" flow (Sentinel rule 41)** is a production-build requirement, not a sandbox one. It lives alongside `templates/backend/auth.py`.
+### Sandbox test credentials (DOCUMENTED, not secret)
 
-When promoting this build to a real client environment:
-1. Drop in `templates/backend/auth.py` from the playbook canonical scaffold.
-2. Mount it at server startup: `from templates.backend.auth import flask_middleware; flask_middleware(app)`.
-3. Flip `config.json → auth.enabled = true`.
-4. Run the password-set flow for every user in `data/users.json`.
-5. Verify that every protected endpoint short-circuits with a 401 when called without a token, and a 403 when called with a token whose role is not in `_role_can(role, resource)`.
+Keyed by role: `password_owner`, `password_president`, `password_accounting`, `password_tc`, `password_agent`. Seeded by `engine/init_passwords.py` on first run. Production builds run `engine/init_passwords.py --interactive` to set real passwords per user.

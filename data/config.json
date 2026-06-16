@@ -34,6 +34,11 @@
     "powered_by": "Powered by Fellowship Automation",
     "show_powered_by": true
   },
+  "cookies": {
+    "_comment": "Atlas finding #3: cookie hardening. Sandbox default is secure=false so HTTP loopback (127.0.0.1:8001) works without TLS. Production builds should flip secure=true OR set AIOS_SECURE_COOKIES=1 in env OR terminate TLS so request.is_secure is True. samesite=Lax is always applied regardless.",
+    "secure": false,
+    "samesite": "Lax"
+  },
   "auth": {
     "enabled": true,
     "type": "basic",

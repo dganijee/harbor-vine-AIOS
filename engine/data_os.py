@@ -212,6 +212,20 @@ def init_db():
         )
     """)
 
+    # ----- Login attempts (Atlas finding #4: per-IP rate limit on /api/login) -----
+    c.execute("""
+        CREATE TABLE IF NOT EXISTS login_attempts (
+            id INTEGER PRIMARY KEY AUTOINCREMENT,
+            ip TEXT NOT NULL,
+            username TEXT,
+            failed_at TIMESTAMP NOT NULL DEFAULT CURRENT_TIMESTAMP
+        )
+    """)
+    c.execute(
+        "CREATE INDEX IF NOT EXISTS idx_login_attempts_ip_time "
+        "ON login_attempts (ip, failed_at)"
+    )
+
     conn.commit()
     conn.close()
     return True

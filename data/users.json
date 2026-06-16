@@ -37,12 +37,11 @@
         "Listings",
         "Pipeline",
         "Showings",
-        "Commissions",
         "Documents",
         "Leads",
         "Settings"
       ],
-      "scope_notes": "Near-full. Sees commission TOTALS per agent (no split breakdowns). No payroll detail. Server strips split_pct from /api/commissions response for this role.",
+      "scope_notes": "Near-full ops view. NO payroll, NO commissions per intake. Sees pipeline + listings + showings + documents + leads + settings.",
       "email": "",
       "setup_status": "pending",
       "password_hash": "$argon2id$v=19$m=19456,t=2,p=1$gdF+hRsjYC60ZWAN2VQiJA$xtI5OoqarOIugGh0UBkVhQV9h6QsboygsXEzsrmKuyc"
@@ -131,5 +130,5 @@
   ],
   "total_target": 6,
   "remaining_slots": 0,
-  "_security_note": "Client-build-grade (promoted 2026-06-16, argon2id upgrade 2026-06-16): auth.enabled=true. Each user carries a single password_hash field. Passwords are hashed with **argon2id** (`$argon2id$v=19$m=19456,t=2,p=1`, OWASP minimum parameters) via argon2-cffi's PasswordHasher; the 16-byte salt is embedded in the hash format (no separate password_salt column). The auth implementation lives in templates/backend/auth.py, mounted via flask_middleware(app) at server boot, gating every route except /login, /api/login, /logout, /brand.css, /static/*. Tokens are HMAC-SHA256-signed JWT-like payloads in the aios_token cookie. Transparent rehash on login via PasswordHasher.check_needs_rehash() — if OWASP parameters tighten, the next successful login upgrades the stored hash automatically. SANDBOX TEST CREDENTIALS were seeded by engine/init_passwords.py keyed by role: password_owner, password_president, password_accounting, password_tc, password_agent. Production builds run engine/init_passwords.py --interactive to prompt each user for a real password on first run (Sentinel rule 41 — no default password ships in production)."
+  "_security_note": "Client-build-grade (promoted 2026-06-16; argon2id upgrade 2026-06-16; Atlas-finding patch round 2026-06-16): auth.enabled=true. Each user carries a single password_hash field. Passwords are hashed with **argon2id** (`$argon2id$v=19$m=19456,t=2,p=1`, OWASP minimum parameters) via argon2-cffi's PasswordHasher; the 16-byte salt is embedded in the hash format (no separate password_salt column). The auth implementation lives in templates/backend/auth.py, mounted via flask_middleware(app) at server boot, gating every route except /login, /api/login, /logout, /brand.css, /static/*. Tokens are HMAC-SHA256-signed JWT-like payloads in the aios_token cookie (httponly=True, samesite=Lax, secure env-gated). EFFECTIVE ROLE is server-derived from authenticated identity (this row's `role`) — never from a client-set session field. /api/role_switch is owner-only and only narrows. Login rate-limited per IP (5 failures / 15 min → 429). CSRF tokens bind to session anchors (sha256 of aios_token). Transparent rehash on login via PasswordHasher.check_needs_rehash(). SANDBOX TEST CREDENTIALS were seeded by engine/init_passwords.py keyed by role: password_owner, password_president, password_accounting, password_tc, password_agent. Production builds run engine/init_passwords.py --interactive to prompt each user for a real password on first run (Sentinel rule 41 — no default password ships in production)."
 }

@@ -142,8 +142,56 @@ def _get_user_by_role(role, user_name=None):
     return None
 
 
+def _authenticated_user():
+    """Return the user dict for the AUTHENTICATED identity in this session.
+
+    Atlas finding #1: authority must derive from the authenticated identity,
+    not from any client-settable session field. The login flow
+    (templates/backend/auth.py) writes `session['authenticated_username']`
+    on success; we look that name up in users.json and trust the role
+    stamped on the roster row.
+
+    Returns None if no authenticated identity is on the session (sandbox
+    fallback / auth disabled).
+    """
+    username = session.get('authenticated_username')
+    if not username:
+        return None
+    return _get_user_by_name(username)
+
+
+def _authenticated_role():
+    """Real role for the authenticated identity. None when unauthenticated."""
+    u = _authenticated_user()
+    return (u or {}).get('role')
+
+
 def _current_role():
-    """Session-backed role; defaults to owner in the sandbox demo."""
+    """Effective role for the current request.
+
+    Server-derived. Order:
+      1. If authenticated AND owner has set a preview_role -> preview_role
+         (only honored when authenticated_role == 'owner' AND the preview
+         strictly narrows below owner's resource set).
+      2. Real authenticated role from users.json.
+      3. Fallback: 'owner' (sandbox demo with auth disabled — never used
+         when auth.enabled=true).
+    """
+    auth_role = _authenticated_role()
+    if auth_role == 'owner':
+        preview = session.get('preview_role')
+        if preview and preview != 'owner' and preview in _ROLE_RESOURCE_ALLOW:
+            preview_set = _ROLE_RESOURCE_ALLOW.get(preview, set())
+            owner_set = _ROLE_RESOURCE_ALLOW.get('owner', set())
+            # Strict narrowing: preview's resource set must be a subset
+            # of owner's. If somehow it's not, ignore the preview and
+            # return owner's true role (fail closed on widening).
+            if preview_set.issubset(owner_set):
+                return preview
+        return 'owner'
+    if auth_role:
+        return auth_role
+    # Sandbox fallback when auth is disabled — keeps demo functional.
     return session.get('role', 'owner')
 
 
@@ -163,7 +211,31 @@ def _strip_sensitive(user):
 
 
 def _current_user():
+    """Resolve the user dict for the effective role + scope.
+
+    Atlas finding #1: when an owner is previewing another role, the
+    `preview_user_name` session field disambiguates which agent's book
+    to scope to (Jess vs Tomás). Outside the preview path, real
+    authenticated identity wins.
+    """
     role = _current_role()
+    auth_role = _authenticated_role()
+
+    # Authenticated path: trust the roster row for the real identity.
+    if auth_role and role == auth_role:
+        u = _authenticated_user()
+        if u:
+            return _strip_sensitive(u)
+
+    # Preview path (owner only) — _current_role() already enforced that
+    # `role` is a narrowing of owner's set.
+    if auth_role == 'owner' and role != 'owner':
+        preview_user_name = session.get('preview_user_name')
+        user = _get_user_by_role(role, user_name=preview_user_name)
+        if user:
+            return _strip_sensitive(user)
+
+    # Sandbox fallback (auth disabled): legacy behavior.
     user_name = session.get('user_name')
     user = _get_user_by_role(role, user_name=user_name)
     if not user:
@@ -174,11 +246,17 @@ def _current_user():
 # Documented per-role resource scope. Used by every list endpoint as the
 # 403 gate BEFORE any DB read; mirrored by the dashboard's visible_tabs.
 # Source of truth: context/team_context.md.
+#
+# Atlas finding #2: president sees NO commission data. The intake framed
+# the president role as "near-full, NO payroll/financials" — exposing
+# per-deal commission amounts + agent totals + MTD is financial detail
+# regardless of whether split_pct is stripped. President no longer has
+# 'commissions' in their resource set; /api/commissions returns 403.
 _ROLE_RESOURCE_ALLOW = {
     'owner':      {'overview', 'listings', 'pipeline', 'showings',
                    'commissions', 'documents', 'leads', 'settings'},
     'president':  {'overview', 'listings', 'pipeline', 'showings',
-                   'commissions', 'documents', 'leads', 'settings'},
+                   'documents', 'leads', 'settings'},
     'accounting': {'overview', 'commissions', 'settings'},
     'tc':         {'overview', 'listings', 'pipeline', 'showings',
                    'documents', 'settings'},
@@ -202,11 +280,14 @@ def _scope_for_role(role):
             'hide_commissions': False,
         }
     if role == 'president':
+        # Atlas finding #2: president sees no commission data per intake's
+        # "no payroll/financials" framing. Commissions tab hidden in UX;
+        # /api/commissions returns 403 (gate in _ROLE_RESOURCE_ALLOW).
         return {
             'visible_tabs': ['Overview', 'Listings', 'Pipeline', 'Showings',
-                             'Commissions', 'Documents', 'Leads', 'Settings'],
+                             'Documents', 'Leads', 'Settings'],
             'agent_filter': None,
-            'hide_commissions': False,  # totals only — split detail enforced in payload
+            'hide_commissions': True,
         }
     if role == 'accounting':
         return {
@@ -289,6 +370,22 @@ def serve_pwa_icon():
 # Role switch
 # ---------------------------------------------------------------------------
 
+# -----------------------------------------------------------------------
+# /api/role_switch — owner-only PREVIEW (Atlas finding #1 + Iris rule #12).
+#
+# Atlas finding #1 (HIGH): the prior implementation set `session['role']`
+# directly from the request body, so any authenticated caller could POST
+# {"role": "owner"} and elevate. The fix: role is derived server-side
+# from the authenticated identity (see _current_role()); /api/role_switch
+# is owner-only and may only NARROW the effective role (preview an agent's
+# scope, etc.). Non-owner authenticated callers get 403.
+#
+# Iris standing rule #12: "demo role-switch mirrors server-side RBAC; real
+# lower-role sessions stay server-authoritative." That rule applied here
+# from day one and we missed it — that's the meta-lesson. Felix rules 35
+# and 36 codify the pattern so it doesn't recur.
+# -----------------------------------------------------------------------
+
 @app.route('/api/role_switch', methods=['POST'])
 @require_csrf
 def api_role_switch():
@@ -299,11 +396,46 @@ def api_role_switch():
     if role not in valid:
         return jsonify({'error': f'unknown role: {role}'}), 400
 
-    # Multiple agents on the firm — Jess vs Tomás — must be disambiguated
-    # so we can scope to the right book. If no user_name supplied, fall back
-    # to the first agent in users.json (existing demo behavior) so the role
-    # switcher stays one-click usable, but the lookup is no longer
-    # first-match: it honors user_name when given.
+    auth_role = _authenticated_role()
+    # If auth is disabled (sandbox-with-auth-off) we have no authenticated
+    # identity — preserve legacy demo behavior so the dashboard's role
+    # switcher works without a real login.
+    if auth_role is None and not session.get('authenticated_username'):
+        session['role'] = role
+        if user_name:
+            session['user_name'] = user_name
+        else:
+            session.pop('user_name', None)
+        user = _current_user()
+        scope = _scope_for_role(role)
+        return jsonify({'role': role, 'user': user, 'scope': scope,
+                        '_mode': 'sandbox-noauth'})
+
+    # Authenticated path. Only owner may preview other roles.
+    if auth_role != 'owner':
+        return jsonify({
+            'error': 'forbidden',
+            'detail': 'role_switch is owner-only (preview).'
+        }), 403
+
+    # Owner switching back to their own view clears any preview.
+    if role == 'owner':
+        session.pop('preview_role', None)
+        session.pop('preview_user_name', None)
+        user = _current_user()
+        scope = _scope_for_role('owner')
+        return jsonify({'role': 'owner', 'user': user, 'scope': scope})
+
+    # Strict-narrowing check: preview MUST be a subset of owner's set.
+    preview_set = _ROLE_RESOURCE_ALLOW.get(role, set())
+    owner_set = _ROLE_RESOURCE_ALLOW.get('owner', set())
+    if not preview_set.issubset(owner_set):
+        return jsonify({
+            'error': 'preview role not a strict narrowing of owner.'
+        }), 400
+
+    # Multiple agents on the firm — Jess vs Tomás. Disambiguator must
+    # resolve to a real agent on the roster.
     if role == 'agent' and user_name:
         candidate = _get_user_by_name(user_name)
         if candidate is None or candidate.get('role') != 'agent':
@@ -311,11 +443,16 @@ def api_role_switch():
                 'error': f'no agent named "{user_name}" found in roster',
             }), 400
 
-    session['role'] = role
+    session['preview_role'] = role
     if user_name:
-        session['user_name'] = user_name
+        session['preview_user_name'] = user_name
     else:
-        session.pop('user_name', None)
+        session.pop('preview_user_name', None)
+
+    # Note: we deliberately do NOT touch session['role'] or
+    # session['user_name'] — those are the legacy sandbox-noauth fields.
+    # The preview flow uses session['preview_role'] exclusively so the
+    # authenticated identity remains the source of truth.
 
     user = _current_user()
     scope = _scope_for_role(role)
@@ -323,6 +460,7 @@ def api_role_switch():
         'role': role,
         'user': user,
         'scope': scope,
+        '_mode': 'preview',
     })
 
 

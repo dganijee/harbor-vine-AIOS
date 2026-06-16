@@ -47,6 +47,9 @@ from argon2.exceptions import (
     Argon2Error,
 )
 
+from templates.backend import cookie_secure, cookie_samesite
+from templates.backend.rate_limit import limiter as _login_limiter
+
 logging.basicConfig(level=logging.INFO)
 logger = logging.getLogger("auth")
 
@@ -228,7 +231,7 @@ class Auth:
 
     def flask_middleware(self, app):
         """Register @before_request auth gate + login/logout routes."""
-        from flask import request, jsonify, make_response, redirect, url_for
+        from flask import request, jsonify, make_response, redirect, url_for, session
 
         # Paths that bypass auth. /brand.css is needed by the login page;
         # /static/* covers any future static assets.
@@ -272,7 +275,19 @@ class Auth:
         @app.route("/api/login", methods=["POST"])
         def api_login():
             # CSRF is intentionally NOT enforced on login (bootstrap entry).
-            # Brute-force defense is rate-limiting at the reverse proxy.
+            # Atlas finding #4: brute-force defense is now an in-process
+            # per-IP rate limiter — don't rely on a reverse proxy that
+            # may not exist in the sandbox / loopback deploy target.
+            ip = (request.remote_addr or "").strip()
+            allowed, retry_after = _login_limiter.check(ip)
+            if not allowed:
+                resp = make_response(jsonify({
+                    "error": "Too many failed attempts. Try again later.",
+                    "retry_after_seconds": retry_after,
+                }), 429)
+                resp.headers["Retry-After"] = str(retry_after)
+                return resp
+
             data = request.get_json(silent=True) or {}
             username = (data.get("username") or "").strip()
             password = data.get("password") or ""
@@ -280,17 +295,34 @@ class Auth:
             # don't require a server restart.
             self.users_doc = self._load_json(self.users_path) or {"users": []}
             if self.verify_password(username, password):
+                _login_limiter.clear(ip)
                 token = self.create_token(username)
+                # Atlas finding #1: bind authenticated identity to the
+                # Flask session so /api/role_switch + _current_role() can
+                # derive REAL role from users.json (not from a client-set
+                # session field). See server.py _current_role().
+                session["authenticated_username"] = username
+                # Clear any stale preview role left over from a previous
+                # session sharing the same browser.
+                session.pop("preview_role", None)
+                session.pop("preview_user_name", None)
                 resp = make_response(jsonify({
                     "token": token,
                     "user": username,
                     "ok": True,
                 }))
+                # Atlas finding #3: secure flag env-gated, samesite=Lax
+                # everywhere, httponly=True on the session token cookie.
                 resp.set_cookie(
                     "aios_token", token,
-                    httponly=True, samesite="Lax", max_age=86400,
+                    httponly=True,
+                    samesite=cookie_samesite(),
+                    secure=cookie_secure(request),
+                    max_age=86400,
                 )
                 return resp
+
+            _login_limiter.record_failure(ip, username=username)
             return jsonify({"error": "Invalid credentials", "ok": False}), 401
 
         @app.route("/login", methods=["GET"])
@@ -302,8 +334,16 @@ class Auth:
 
         @app.route("/logout", methods=["GET", "POST"])
         def logout():
+            # Clear identity + any preview-role state so the next login
+            # starts from a clean slate (Atlas finding #5: CSRF tokens
+            # bind to authenticated session anchors — stale anchors
+            # MUST not survive a logout/login cycle).
+            for k in ("authenticated_username", "role", "user_name",
+                      "preview_role", "preview_user_name"):
+                session.pop(k, None)
             resp = make_response(redirect("/login", code=302))
             resp.delete_cookie("aios_token")
+            resp.delete_cookie("csrf_token")
             return resp
 
     # ── Login page HTML ────────────────────────────────────────────
